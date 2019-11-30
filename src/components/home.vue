@@ -1,0 +1,11 @@
+<template>
+	<div>This is home.</div>
+</template>
+
+<style>
+	
+</style>
+
+<script>
+	
+</script>
