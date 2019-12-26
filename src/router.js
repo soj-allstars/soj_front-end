@@ -20,7 +20,7 @@ export default new Router({
             component: mainPage,
             children: [
                 {
-                    path: '/problem',
+                    path: '/problem/:pid',
                     name: 'problem',
                     component: problem,
                 },
