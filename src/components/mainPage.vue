@@ -13,6 +13,7 @@
               <v-btn text link :to="{ name: 'problem', params: { pid: 1 }}">题库</v-btn>
               <v-btn text link :to="{ name: 'problem', params: { pid: 1 }}">比赛</v-btn>
               <v-btn text link :to="{ name: 'ProblemSubmitRes', query: { submission_id: 1}}">提交</v-btn>
+              <v-btn text @click="mylogin">登录</v-btn>
           </v-toolbar-items>
         </v-app-bar>
         
@@ -66,6 +67,38 @@
         data : function () {
             return {
                 drawer: false
+            }
+        },
+        methods : {
+            mylogin: function() {
+                var thisCom = this;
+                $.ajax({
+                    //请求方式
+                    type : "POST",
+                    //请求地址
+                    url : thisCom.serveUrl() + '/api/user/login/',
+                    //POST里面的data
+                    data: {
+                        username: "soj",
+                        password: "soj",
+                        keep: true
+                    },
+                    crossDomain: true,
+                    xhrFields: {
+                      withCredentials: true
+                    },
+                    //请求成功
+                    success : function(result) {
+                        alert(result.detail);
+                    },
+                    //请求失败，包含具体的错误信息
+                    error : function(e){
+                      console.log(e.status);
+                      console.log(e.responseText);
+                      alert('出了点问题，请重新提交。');
+                    },
+                    
+                });
             }
         }
 	}

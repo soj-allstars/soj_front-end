@@ -114,6 +114,22 @@
         },
         methods: {
             // 函数
+            getCookie: function(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        // console.log(cookie);
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            },
             submit_code: function() {
                 
                 var submission_id = -1;
@@ -134,28 +150,56 @@
                 console.log(code);
                 console.log(thisCom.selected_lang)
                 
+                var csrftoken = this.getCookie('csrftoken');
+                console.log(csrftoken);
+                
+                
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        console.log(settings.type);
+                        // && !this.crossDomain
+                        if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+                
                 $.ajax({
                     //请求方式
                     type : "POST",
                     //请求地址
                     url : thisCom.serveUrl() + '/api/submission/',
                     //POST里面的data
+                    dataType: 'json',
                     data: {
                         pid: thisCom.pid,
                         code: code,
                         lang: thisCom.selected_lang
                     },
+                    crossDomain: true,
+                    xhrFields: {
+                      withCredentials: true
+                    },
                     //请求成功
                     success : function(result) {
                         submission_id = result.submission_id;
+                        console.log('==============');
                         console.log(submission_id);
                         console.log(this.data.pid);
+                        thisCom.$router.push({
+                            name: 'ProblemSubmitRes',
+                            query: {
+                                submission_id: submission_id
+                            }
+                        })
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e){
                       console.log(e.status);
                       console.log(e.responseText);
-                    }
+                      alert('出了点问题，请重新提交。');
+                    },
+                    
                 });
             },
             code_file_uploaded: function (e) {
