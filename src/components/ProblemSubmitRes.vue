@@ -56,7 +56,7 @@ export default {
                     align: 'left',
                 },
                 { text: 'status', value: 'status'},
-                { text: 'memory cost(MB)', value: 'memory_cost'},
+                { text: 'memory cost(KB)', value: 'memory_cost'},
                 { text: 'time cost(ms)', value: 'time_cost'},
                 { text: 'submit time', value: 'submit_time'},
                 { text: 'language', value: 'language'}

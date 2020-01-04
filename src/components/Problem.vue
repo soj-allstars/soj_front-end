@@ -62,7 +62,7 @@
                             </v-col>
                             <v-col cols='3'>
                                 <v-icon>mdi-memory</v-icon>
-                                memory limit: {{memory_limit}}MB
+                                memory limit: {{parseInt(memory_limit / 1000)}}MB
                             </v-col>
                         </v-row>
                     </v-card-subtitle>
@@ -71,34 +71,27 @@
                         <p v-for="p in description.split('\n')" :key="p.id">
                             {{p}}
                         </p>
-                        
                     </v-card-text>
+                    <!-- inputs and outputs -->
                     <v-card-text>
-                        <div class="pa-1 pl-0">sample inputs:</div>
-                       <v-card
-                         outlined
-                         color="#eee"
-                         class="pa-2"
-                         >
-                            <div v-for="iitem in sample_inputs" :key='iitem.id' class='code_font'>
-                                {{iitem}}
-                           </div>
-                        </v-card>
-                    </v-card-text>
-                    <v-card-text>
-                        <div class="pa-1 ol-0">sample outputs:</div>
-                        <v-card
-                         outlined
-                         color="#eee"
-                         class="pa-2"
-                         >
-                            <div v-for="oitem in sample_outputs" :key='oitem.id' class='code_font'>
-                                {{oitem}}
-                            </div>
-                        </v-card>
-                    </v-card-text>
-                    <v-card-text>
-                        {{note}}
+                        <template v-for="i in sample_inputs.length">
+                            sample {{i}}:
+                            <v-card
+                            outlined
+                            color="#eee"
+                            class="pa-2 mb-10"
+                            :key="i.id"
+                            >
+                                <div class='caption'>input</div>
+                                <div class='mb-5 code_font'>
+                                    {{sample_inputs[i - 1]}}
+                                </div>
+                                <div class="caption">output</div>
+                                <div class="code_font">
+                                    {{sample_outputs[i - 1]}}
+                                </div>
+                            </v-card>
+                        </template>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -149,6 +142,34 @@
               console.log(e.responseText);
             }
         });
+      },
+      beforeRouteUpdate (to, from, next) {
+          // react to route changes...
+          // don't forget to call next()
+          this.pid = to.params.pid;
+          var thisCom = this;
+          $.ajax({
+              //请求方式
+              type : "GET",
+              //请求地址
+              url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid,
+              //请求成功
+              success : function(result) {
+                  thisCom.title = result.title;
+                  thisCom.time_limit = result.time_limit;
+                  thisCom.memory_limit = result.memory_limit;
+                  thisCom.description = result.description;
+                  thisCom.sample_inputs = result.sample_inputs;
+                  thisCom.sample_outputs = result.sample_outputs;
+                  thisCom.note = result.note;
+              },
+              //请求失败，包含具体的错误信息
+              error : function(e){
+                console.log(e.status);
+                console.log(e.responseText);
+              }
+          });
+          next();
       }
     }
     

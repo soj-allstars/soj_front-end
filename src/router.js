@@ -8,7 +8,8 @@ import youtube from '@/components/youtube'
 import shit from '@/components/shit'
 import problem from '@/components/Problem'
 import problemSubmit from '@/components/ProblemSubmit'
-import ProblemSubmitRes from '@/components/ProblemSubmitRes'
+import problemSubmitRes from '@/components/ProblemSubmitRes'
+import problemSet from '@/components/ProblemSet'
 
 Vue.use(Router)
 
@@ -30,9 +31,14 @@ export default new Router({
                     component: problemSubmit,
                 },
                 {
-                    path: '/ProblemSubmitRes',
-                    name: 'ProblemSubmitRes',
-                    component: ProblemSubmitRes,
+                    path: '/problemSubmitRes',
+                    name: 'problemSubmitRes',
+                    component: problemSubmitRes,
+                },
+                {
+                    path: '/problemSet',
+                    name: 'problemSet',
+                    component: problemSet
                 }
             ]
         },

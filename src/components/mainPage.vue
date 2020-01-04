@@ -10,9 +10,9 @@
           <v-toolbar-title>SOJ</v-toolbar-title>
           <v-spacer />
           <v-toolbar-items>
-              <v-btn text link :to="{ name: 'problem', params: { pid: 1 }}">题库</v-btn>
+              <v-btn text link :to="{ name: 'problemSet' }">题库</v-btn>
               <v-btn text link :to="{ name: 'problem', params: { pid: 1 }}">比赛</v-btn>
-              <v-btn text link :to="{ name: 'ProblemSubmitRes', query: { submission_id: 1}}">提交</v-btn>
+              <v-btn text link :to="{ name: 'problemSubmitRes', query: { submission_id: 1}}">提交</v-btn>
               <v-btn text @click="mylogin">登录</v-btn>
           </v-toolbar-items>
         </v-app-bar>

@@ -13,5 +13,6 @@ module.exports = {
               Popper: ['popper.js', 'default']
           })
       ]
-  }
+  },
+  assetsDir: './static'
 }
