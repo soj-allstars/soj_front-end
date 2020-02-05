@@ -6,11 +6,12 @@ import demoPage from '@/components/demoPage'
 import complex from '@/components/complex'
 import youtube from '@/components/youtube'
 import shit from '@/components/shit'
-import problem from '@/components/Problem'
-import problemSubmit from '@/components/ProblemSubmit'
-import problemSubmitRes from '@/components/ProblemSubmitRes'
-import problemSet from '@/components/ProblemSet'
+import problem from '@/components/problem'
+import problemSubmit from '@/components/problemSubmit'
+import problemSubmitRes from '@/components/problemSubmitRes'
+import problemSet from '@/components/problemSet'
 import login from '@/components/login'
+import addProblem from '@/components/addProblem'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router({
                     name: 'login',
                     component: login
                 },
+                {
+                    path: '/addProblem',
+                    name: 'addProblem',
+                    component: addProblem
+                }
             ]
         },
         {
