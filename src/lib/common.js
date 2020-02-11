@@ -2,7 +2,9 @@ export default {
     install(Vue)
     {
         Vue.prototype.serveUrl = function () {
-            return 'http://localhost';
+            var currentBaseURL = location.protocol + "//" + location.hostname;
+            return currentBaseURL;
+            // return 'http://localhost';
         };
     }
 }

@@ -83,6 +83,8 @@ export default {
                 url : thisCom.serveUrl() + '/api/submission/' + submission_id,
                 //请求成功
                 success : function(result) {
+                    // 因为是异步的，所以可能执行这个函数的时候，调用这个函数之后的代码段可能已经运行了
+                    
                     thisCom.verdict = result.verdict;
                     thisCom.memory_usage = result.memory;
                     thisCom.time_usage = result.time;
@@ -90,14 +92,15 @@ export default {
                     thisCom.code = result.code;
                     thisCom.lang = result.lang;
                     thisCom.outputs = result.outputs;
-                    // console.log(thisCom.verdict);
-                    // console.log(thisCom.memory_usage);
-                    // console.log(thisCom.time_usage);
-                    // console.log(thisCom.submit_time);
-                    // console.log(thisCom.code);
-                    // console.log(thisCom.lang);
-                    // console.log(thisCom.outputs);
-                    // console.log(result);
+                    
+                    
+                    console.log('verdict:\n' + thisCom.verdict);
+                    console.log('memory_usage:\n' + thisCom.memory_usage);
+                    console.log('time_usage:\n' + thisCom.time_usage);
+                    console.log('submit_time:\n' + thisCom.submit_time);
+                    console.log('code:\n' + thisCom.code);
+                    console.log('lang:\n' + thisCom.lang);
+                    console.log('outputs:\n' + thisCom.outputs);
                     
                     thisCom.items[0].status = thisCom.verdict;
                     thisCom.items[0].memory_cost = thisCom.memory_usage;
@@ -116,16 +119,7 @@ export default {
     created: function() {
         var thisCom = this;
         
-        this.$route.query.submission_id;
         this.getSubmission(this.$route.query.submission_id);
-        
-        console.log(thisCom.verdict);
-        console.log(thisCom.memory_usage);
-        console.log(thisCom.time_usage);
-        console.log(thisCom.submit_time);
-        console.log(thisCom.code);
-        console.log(thisCom.lang);
-        console.log(thisCom.outputs);
         
         
         this.items[0].status = this.verdict;
@@ -134,6 +128,13 @@ export default {
         this.items[0].submit_time = this.submit_time;
         this.items[0].language = this.lang;
         console.log(this.items[0]);
+    },
+    
+    beforeRouteUpdate (to, from, next) {
+        // react to route changes...
+        // don't forget to call next()
+        this.getSubmission(this.$route.query.submission_id);
+        next();
     }
 }
 </script>

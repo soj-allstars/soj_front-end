@@ -135,24 +135,32 @@
                 var submission_id = -1;
                 var thisCom = this;
                 var code = '';
-                if (thisCom.file_code !== '' || thisCom.file_code !== null || thisCom.file_code !== undefined) {
+                if (thisCom.file_code) {
                     code = thisCom.file_code;
+                    console.log("code_file:\n" + code);
                 }
-                else if (thisCom.code !== '' || thisCom.code !== null || thisCom.code !== undefined) {
+                else if (thisCom.code) {
                     code = thisCom.code;
+                    console.log("code_text:\n" + code);
                 }
                 else {
                     alert('code is empty!');
                     return;
                 }
                 
-                console.log(thisCom.pid);
-                console.log(code);
-                console.log(thisCom.selected_lang)
+                if (!thisCom.selected_lang) {
+                    alert('plz select language');
+                    return;
+                }
                 
+                console.log("pid:\n" + thisCom.pid);
+                console.log("code:\n" + code);
+                console.log("lang:\n" + thisCom.selected_lang)
+                
+                
+                // 用于跨域
                 var csrftoken = this.getCookie('csrftoken');
-                console.log(csrftoken);
-                
+                console.log("csrftoken:\n" + csrftoken);
                 
                 $.ajaxSetup({
                     beforeSend: function(xhr, settings) {
@@ -197,7 +205,7 @@
                     error : function(e){
                       console.log(e.status);
                       console.log(e.responseText);
-                      alert('出了点问题，请重新提交。');
+                      alert(e.responseText);
                     },
                     
                 });

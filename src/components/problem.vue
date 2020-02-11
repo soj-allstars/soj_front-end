@@ -119,6 +119,8 @@
     	  }
       },
       beforeMount : function() {
+          console.log(this.serveUrl());
+          
         this.pid = this.$route.params.pid;
         var thisCom = this;
         $.ajax({
@@ -143,6 +145,9 @@
             }
         });
       },
+      
+      // 只改变参数是不会使页面刷新的
+      // 需要通过这个函数来执行参数更新的操作
       beforeRouteUpdate (to, from, next) {
           // react to route changes...
           // don't forget to call next()
