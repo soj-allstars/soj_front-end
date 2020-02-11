@@ -18,29 +18,34 @@
                                         <v-text-field
                                          outlined
                                          label='Title'
+                                         v-model="title"
                                         ></v-text-field>
                                         
                                         <v-textarea
                                           outlined
                                           label="Description"
+                                          v-model="description"
                                         ></v-textarea>
                                         
                                         <v-text-field
                                          outlined
                                          label='Note'
+                                         v-model="note"
                                         ></v-text-field>
                                         
                                         <v-row>
                                             <v-col cols="6">
                                                 <v-text-field
                                                  outlined
-                                                 label='Time Limit'
+                                                 label='Time Limit(ms)'
+                                                 v-model="time_limit"
                                                 ></v-text-field>
                                             </v-col>
                                             <v-col>
                                                 <v-text-field
                                                  outlined
-                                                 label='Memory Limit'
+                                                 label='Memory Limit(KB)'
+                                                 v-model="memory_limit"
                                                 ></v-text-field>
                                             </v-col>
                                         </v-row>
@@ -60,6 +65,7 @@
                                                     <v-file-input
                                                      label="upload JSON file"
                                                      show-size
+                                                     @change="json_file_uploaded"
                                                      v-show="upload_json"
                                                     >
                                                     </v-file-input>
@@ -68,6 +74,7 @@
                                                       outlined
                                                       v-show="!upload_json"
                                                       label="JSON content"
+                                                      v-model="json_text"
                                                     ></v-textarea>
                                                 </v-col>
                                             </v-row>
@@ -99,6 +106,7 @@
                                                              label="upload code file"
                                                              show-size
                                                              v-show="upload_code"
+                                                             @change="code_file_uploaded"
                                                             >
                                                             </v-file-input>
                                                             
@@ -106,6 +114,7 @@
                                                               outlined
                                                               v-show="!upload_code"
                                                               label="code content"
+                                                              v-model="code_text"
                                                             ></v-textarea>
                                                         </v-col>
                                                     </v-row>
@@ -130,6 +139,7 @@
                                                      label="upload solution file"
                                                      show-size
                                                      v-show="upload_solution"
+                                                     @change="solution_file_uploaded"
                                                     >
                                                     </v-file-input>
                                                     
@@ -137,6 +147,7 @@
                                                       outlined
                                                       v-show="!upload_solution"
                                                       label="solution content"
+                                                      v-model="solution_text"
                                                     ></v-textarea>
                                                 </v-col>
                                             </v-row>
@@ -165,7 +176,13 @@
                                             </v-col>
                                         </v-row>
                                         
+                                        <v-btn block @click.stop="showres">
+                                            debug
+                                        </v-btn>
                                         
+                                        <v-btn block @click.stop="test_ws">
+                                            aaa
+                                        </v-btn>
                                         
                                     </v-card>
                                 </v-col>
@@ -185,8 +202,14 @@
                 title: '',
                 description: '',
                 note: '',
-                time_limit: '',
-                memory_limit: '',
+                time_limit: 0,
+                memory_limit: 0,
+                json_file: null,
+                json_text: '',
+                code_file: null,
+                code_text: '',
+                solution_file: null,
+                solution_text: '',
                 
                 // json输入框相关
                 upload_json_btn_text: ['write JSON manually', 'upload JSON file'],
@@ -339,9 +362,65 @@
                 this.solution_btn_text_index = (this.solution_btn_text_index + 1) % this.upload_solution_btn_text.length;
                 this.upload_solution = !this.upload_solution;
             },
-        },
-        watch: {
+            read_file: function(f, target) {
+                var thisCom = this;
+                
+                if (window.File && window.FileReader && window.FileList && window.Blob) {
+                    // Great success! All the File APIs are supported.
+                    var reader = new FileReader();
+                    reader.readAsText(f);
+                    reader.onload = function() {
+                        thisCom[target] = this.result;
+                    }
+                } else {
+                    alert('The File APIs are not fully supported in this browser.');
+                }
+            },
+            json_file_uploaded: function(f) {
+                this.read_file(f, "json_file");
+            },
+            code_file_uploaded: function(f) {
+                this.read_file(f, "code_file");
+            },
+            solution_file_uploaded: function(f) {
+                this.read_file(f, "solution_file");
+            },
             
+            showres: function() {
+                console.log("title: \n" + this.title);
+                console.log("description: \n" + this.description);
+                console.log("note: \n" + this.note);
+                console.log("time limit: \n" + this.time_limit);
+                console.log("memory limit: \n" + this.memory_limit);
+                console.log("json file: \n" + this.json_file);
+                console.log("json_text: \n" + this.json_text);
+                console.log("checker_type: \n" + this.selected_checker_type);
+                
+                console.log("code file: \n" + this.code_file);
+                console.log("code text:\n" + this.code_text);
+                console.log("solution file:\n" + this.solution_file);
+                console.log("solution text:\n"+ this.solution_text);
+                console.log("solution language: \n" + this.selected_lang);
+            },
+            
+            
+            test_ws: function() {
+                var ws = new WebSocket("ws://47.106.140.231/ws/problem/check/");
+                
+                ws.onopen = function(evt) { 
+                  console.log("Connection open ..."); 
+                  ws.send("Hello WebSockets!");
+                };
+                
+                ws.onmessage = function(evt) {
+                  console.log( "Received Message: " + evt.data);
+                  ws.close();
+                };
+                
+                ws.onclose = function(evt) {
+                  console.log("Connection closed.");
+                };   
+            }
         }
     }
 </script>

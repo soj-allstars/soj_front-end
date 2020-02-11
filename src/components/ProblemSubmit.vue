@@ -38,6 +38,7 @@
                              v-model="code"
                             >
                             </v-textarea>
+                            {{code}}
                             <!-- 用于调试 -->
                             <!-- <div>{{code}}</div> -->
                         </v-col>
@@ -135,34 +136,38 @@
                 var submission_id = -1;
                 var thisCom = this;
                 var code = '';
-                if (thisCom.file_code !== '' || thisCom.file_code !== null || thisCom.file_code !== undefined) {
+                if (thisCom.file_code) {
                     code = thisCom.file_code;
+                    console.log("code_file:\n'" + code + "'\n");
                 }
-                else if (thisCom.code !== '' || thisCom.code !== null || thisCom.code !== undefined) {
+                else if (thisCom.code) {
                     code = thisCom.code;
+                    console.log("code_text:\n'" + code + "'\n");
                 }
                 else {
                     alert('code is empty!');
                     return;
                 }
                 
-                console.log(thisCom.pid);
-                console.log(code);
-                console.log(thisCom.selected_lang)
-                
-                var csrftoken = this.getCookie('csrftoken');
-                console.log(csrftoken);
+                console.log("pid:\n" + thisCom.pid);
+                console.log("code:\n" + code);
+                console.log("lang:\n" + thisCom.selected_lang)
                 
                 
-                $.ajaxSetup({
-                    beforeSend: function(xhr, settings) {
-                        console.log(settings.type);
-                        // && !this.crossDomain
-                        if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
-                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                        }
-                    }
-                });
+                // 之前为了跨域提交而用的代码，现在用nginx反向代理解决
+                // var csrftoken = this.getCookie('csrftoken');
+                // console.log(csrftoken);
+                
+                
+                // $.ajaxSetup({
+                //     beforeSend: function(xhr, settings) {
+                //         console.log(settings.type);
+                //         // && !this.crossDomain
+                //         if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
+                //             xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                //         }
+                //     }
+                // });
                 
                 $.ajax({
                     //请求方式
