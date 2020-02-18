@@ -59,13 +59,15 @@
                                         <v-card outlined class="pa-5 mb-7">
                                             <v-row>
                                                 <v-col>
-                                                    <v-text-field
+                                                    <v-textarea
+                                                     dense
+                                                     rows="2"
                                                      v-for="(sample_input, i) of sample_inputs"
                                                      v-model="sample_inputs[i]"
                                                      :key="i"
                                                      outlined
                                                      :label="'sample input No.' + i"
-                                                    ></v-text-field>
+                                                    ></v-textarea>
                                                 </v-col>
                                             </v-row>
                                             <v-row class="ma-0">
@@ -284,9 +286,9 @@
                                             </v-col>
                                         </v-row>
                                         
-<!--                                        <v-btn block @click.stop="showres" outlined>-->
-<!--                                            show data on console-->
-<!--                                        </v-btn>-->
+                                        <v-btn block @click.stop="showres" outlined>
+                                            show data on console
+                                        </v-btn>
 <!--                                        <v-btn block @click.stop="test_ws" outlined>-->
 <!--                                            test WebSocket-->
 <!--                                        </v-btn>-->
@@ -316,8 +318,8 @@
                 title: '',
                 description: '',
                 note: '',
-                time_limit: 0,
-                memory_limit: 0,
+                time_limit: 2000,
+                memory_limit: 131072,
                 sample_inputs: [""],
                 json_file: null,
                 json_text: '',
@@ -538,12 +540,14 @@
                     alert("memory limit couldn't be 0!");
                     return false;
                 }
-                for (let sample_item of this.sample_inputs) {
-                    if (!sample_item) {
-                        alert("at least 1 input is empty!");
-                        return false;
-                    }
-                }
+
+                // no need to check sample input is empty
+                // for (let sample_item of this.sample_inputs) {
+                //     if (!sample_item) {
+                //         alert("at least 1 input is empty!");
+                //         return false;
+                //     }
+                // }
 
                 if (this.upload_json) {
                     if (!this.json_file) {
@@ -671,6 +675,7 @@
                     success : function(result) {
                         console.log('==============');
                         thisCom.problem_id_from_backend = result.problem_id;
+                        thisCom.problem_id = result.problem_id;
                         thisCom.problem_id_received = true;
                     },
                     //请求失败，包含具体的错误信息
@@ -743,10 +748,10 @@
                 ws.onclose = function(evt) {
                     console.log("Connection closed.");
                 };
-            }
+            },
 
             // for test
-            /*showres: function() {
+            showres: function() {
                 console.log("title: \n" + this.title);
                 console.log("description: \n" + this.description);
                 console.log("note: \n" + this.note);
@@ -766,23 +771,23 @@
                 console.log("solution language: \n" + this.selected_lang);
             },
 
-            test_ws: function() {
-                var ws = new WebSocket("ws://" + location.hostname + "/ws/problem/check/");
-
-                ws.onopen = function(evt) {
-                    console.log("Connection open ...");
-                    ws.send("Hello WebSockets!");
-                };
-
-                ws.onmessage = function(evt) {
-                    console.log( "Received Message: " + evt.data);
-                    ws.close();
-                };
-
-                ws.onclose = function(evt) {
-                    console.log("Connection closed.");
-                };
-            }*/
+            // test_ws: function() {
+            //     var ws = new WebSocket("ws://" + location.hostname + "/ws/problem/check/");
+            //
+            //     ws.onopen = function(evt) {
+            //         console.log("Connection open ...");
+            //         ws.send("Hello WebSockets!");
+            //     };
+            //
+            //     ws.onmessage = function(evt) {
+            //         console.log( "Received Message: " + evt.data);
+            //         ws.close();
+            //     };
+            //
+            //     ws.onclose = function(evt) {
+            //         console.log("Connection closed.");
+            //     };
+            // }
         }
     }
 </script>

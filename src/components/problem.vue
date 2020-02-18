@@ -62,7 +62,7 @@
                             </v-col>
                             <v-col cols='3'>
                                 <v-icon>mdi-database</v-icon>
-                                memory limit: {{parseInt(memory_limit / 1000)}}MB
+                                memory limit: {{parseInt(memory_limit / 1024)}}MB
                             </v-col>
                         </v-row>
                     </v-card-subtitle>
