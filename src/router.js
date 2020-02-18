@@ -12,6 +12,7 @@ import problemSubmitRes from '@/components/problemSubmitRes'
 import problemSet from '@/components/problemSet'
 import login from '@/components/login'
 import addProblem from '@/components/addProblem'
+import resultDetail from "@/components/resultDetail";
 
 Vue.use(Router)
 
@@ -51,6 +52,11 @@ export default new Router({
                     path: '/addProblem',
                     name: 'addProblem',
                     component: addProblem
+                },
+                {
+                    path: '/resultDetail',
+                    name: 'resultDetail',
+                    component: resultDetail
                 }
             ]
         },

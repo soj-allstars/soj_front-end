@@ -57,11 +57,11 @@
                     <v-card-subtitle class='pa-4 pb-0'>
                         <v-row>
                             <v-col cols='3'>
-                                <v-icon>mdi-timer</v-icon>
+                                <v-icon>mdi-clock</v-icon>
                                 time limit: {{time_limit}}ms
                             </v-col>
                             <v-col cols='3'>
-                                <v-icon>mdi-memory</v-icon>
+                                <v-icon>mdi-database</v-icon>
                                 memory limit: {{parseInt(memory_limit / 1000)}}MB
                             </v-col>
                         </v-row>
