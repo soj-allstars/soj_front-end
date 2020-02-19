@@ -83,13 +83,9 @@
                             :key="i.id"
                             >
                                 <div class='caption'>input</div>
-                                <div class='mb-5 code_font'>
-                                    {{sample_inputs[i - 1]}}
-                                </div>
+                                <div class='mb-5 code_font' v-html='sample_inputs[i - 1].replace("\n", "&lt;br&gt;")'></div>
                                 <div class="caption">output</div>
-                                <div class="code_font">
-                                    {{sample_outputs[i - 1]}}
-                                </div>
+                                <div class="code_font" v-html='sample_outputs[i - 1].replace("\n", "&lt;br&gt;")'></div>
                             </v-card>
                         </template>
                     </v-card-text>

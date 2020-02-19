@@ -178,7 +178,7 @@
                         console.log(submission_id);
                         console.log(this.data.pid);
                         thisCom.$router.push({
-                            name: 'problemSubmitRes',
+                            name: 'problemSubmitResDetail',
                             query: {
                                 submission_id: submission_id
                             }
