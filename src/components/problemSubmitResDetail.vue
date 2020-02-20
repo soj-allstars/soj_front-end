@@ -15,7 +15,7 @@
                                             <v-col cols="6">
                                                 <v-row justify="center">
                                                     <v-col class="pt-0">
-                                                        <v-img :src="'ACMYES/' + verdict + '.png'" height="200" :contain="true"></v-img>
+                                                        <v-img :src="require('../assets/ACMYES/' + verdict + '.png')" height="200" :contain="true"></v-img>
                                                     </v-col>
                                                 </v-row>
                                             </v-col>
@@ -53,7 +53,7 @@
                                 <v-row justify="center" v-show="code">
                                     <v-col cols="10">
                                         <div class="d-flex justify-center">
-                                            <pre><code v-html="code" class="pa-12"></code></pre>
+                                            <pre><code class="pa-12" v-html="code"></code></pre>
                                         </div>
                                     </v-col>
                                 </v-row>
@@ -73,7 +73,7 @@
         name: "problemSubmitResDetail",
         data: function () {
             return {
-                verdict: 'PD',
+                verdict: 'PENDING',
                 memory_usage: 0,
                 time_usage: 0,
                 submit_time: null,
@@ -170,7 +170,12 @@
 </script>
 
 <style scoped>
-    pre code {
-        color: inherit !important;
+    pre code::before {
+        content: "" !important;
+        letter-spacing: 0 !important;
+    }
+    pre code::after {
+        content: "" !important;
+        letter-spacing: 0 !important;
     }
 </style>
