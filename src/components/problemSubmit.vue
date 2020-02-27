@@ -23,7 +23,7 @@
                              v-model="selected_lang"
                              item-text="lang"
                              item-value="lang_id"
-                             label="language"
+                             label="Language"
                             >
                             </v-select>
                         </v-col>
@@ -34,7 +34,7 @@
                              outlined
                              name="code"
                              label="code"
-                             placeholder="input your code here..."
+                             placeholder="Input your code here..."
                              v-model="code"
                             >
                             </v-textarea>
@@ -45,7 +45,7 @@
                     <v-row>
                         <v-col cols="12">
                             <v-file-input
-                             label="or you can upload your code file here"
+                             label="Or you can upload your code file here"
                              show-size
                              @change="code_file_uploaded"
                             >
@@ -54,8 +54,8 @@
                     </v-row>
                     <v-row>
                         <v-col align='start' cols="12">
-                            <div class='caption'>*file will be sent if both file and code text are provided</div>
-                            <div class='caption'>*如果同时填写文本框和上传文件，则会以文件为准</div>
+                            <div class='caption'>* File will be sent if both file and code text are provided</div>
+                            <div class='caption'>* 如果同时填写文本框和上传文件，则会以文件为准</div>
                         </v-col>
                     </v-row>
                     
@@ -63,7 +63,7 @@
                         <v-col align='center'>
                             <v-btn link @click.stop="submit_code"
                              block color="light-blue darken-3" class="button_font white_font">
-                                提交
+                                Submit
                             </v-btn>
                         </v-col>
                     </v-row>
@@ -93,20 +93,24 @@
                     },
                     {
                         lang: "java",
-                        lang_id: "Java"
+                        lang_id: "JAVA"
                     },
                     {
                         lang: "python(cpython)",
                         lang_id: "CPY"
                     },
                     {
+                        lang: "python(PYPY)",
+                        lang_id: "PYPY"
+                    },
+                    {
                         lang: "go",
-                        lang_id: "Go"
+                        lang_id: "GO"
                     },
                     {
                         lang: "Javascript",
-                        lang_id: "JavaScript"
-                    }
+                        lang_id: "JS"
+                    },
                 ],
                 
                 

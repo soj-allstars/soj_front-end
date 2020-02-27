@@ -80,7 +80,7 @@ export default {
                 //请求方式
                 type : "GET",
                 //请求地址
-                url : thisCom.serveUrl() + '/api/submission/' + submission_id,
+                url : thisCom.serveUrl() + '/api/submission/' + submission_id + '/',
                 //请求成功
                 success : function(result) {
                     // 因为是异步的，所以可能执行这个函数的时候，调用这个函数之后的代码段可能已经运行了

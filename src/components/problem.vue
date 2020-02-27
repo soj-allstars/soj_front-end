@@ -58,11 +58,11 @@
                         <v-row>
                             <v-col cols='3'>
                                 <v-icon>mdi-clock</v-icon>
-                                time limit: {{time_limit}}ms
+                                Time Limit: {{time_limit}}ms
                             </v-col>
                             <v-col cols='3'>
                                 <v-icon>mdi-database</v-icon>
-                                memory limit: {{parseInt(memory_limit / 1024)}}MB
+                                Memory Limit: {{parseInt(memory_limit / 1024)}}MB
                             </v-col>
                         </v-row>
                     </v-card-subtitle>
@@ -75,34 +75,62 @@
                     <!-- inputs and outputs -->
                     <v-card-text>
                         <template v-for="i in sample_inputs.length">
-                            sample {{i}}:
+                            Sample {{i}}:
                             <v-card
                             outlined
                             color="#eee"
                             class="pa-2 mb-10"
                             :key="i.id"
                             >
-                                <div class='caption'>input</div>
-                                <div class='mb-5 code_font' v-html='sample_inputs[i - 1].replace("\n", "&lt;br&gt;")'></div>
-                                <div class="caption">output</div>
-                                <div class="code_font" v-html='sample_outputs[i - 1].replace("\n", "&lt;br&gt;")'></div>
+                                <v-row>
+                                    <v-col class="py-0 d-flex justify-space-between">
+                                        <div class='caption'>Input</div>
+                                        <v-btn x-small tile outlined
+                                               @click.stop="copy_sample(sample_inputs[i - 1])">
+                                            <v-icon small>mdi-content-copy</v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                                <div class='code_font' :id="'sample_input_' + (i-1)" v-html='sample_inputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                <v-divider></v-divider>
+                                <v-row>
+                                    <v-col class="py-0 d-flex justify-space-between">
+                                        <div class='caption'>Output</div>
+                                        <v-btn x-small tile outlined
+                                               @click.stop="copy_sample(sample_outputs[i - 1])">
+                                            <v-icon small>mdi-content-copy</v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                                <div class="code_font" :id="'sample_output_' + (i-1)" v-html='sample_outputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
                             </v-card>
                         </template>
+
                     </v-card-text>
                 </v-card>
             </v-col>
         </v-row>
-        
+
+        <textarea id="for_copy" style="opacity: 0"></textarea>
+        <v-snackbar
+            v-model="snackbar"
+            right bottom
+            color="rgba(30, 30, 30, 0.7)"
+            :timeout=1000
+        >
+            copied
+        </v-snackbar>
         
     </v-container>
 </template>
 
 <script>
     export default {
-      data : function () {
-    	  return {
-              // 用于控制左边drawer开关
-    		  drawer: false,
+
+        data : function () {
+            return {
+              // 用于控制页面元素
+              snackbar: false,
               // 题目的内容
               pid: -1,
               title: '',
@@ -112,50 +140,78 @@
               sample_inputs: [],
               sample_outputs: [],
               note: ''
-    	  }
-      },
-      beforeMount : function() {
-          console.log(this.serveUrl());
-          
-        this.pid = this.$route.params.pid;
-        var thisCom = this;
-        $.ajax({
-            //请求方式
-            type : "GET",
-            //请求地址
-            url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid,
-            //请求成功
-            success : function(result) {
-                thisCom.title = result.title;
-                thisCom.time_limit = result.time_limit;
-                thisCom.memory_limit = result.memory_limit;
-                thisCom.description = result.description;
-                thisCom.sample_inputs = result.sample_inputs;
-                thisCom.sample_outputs = result.sample_outputs;
-                thisCom.note = result.note;
-            },
-            //请求失败，包含具体的错误信息
-            error : function(e){
-              console.log(e.status);
-              console.log(e.responseText);
             }
-        });
-      },
+        },
+        methods: {
+            copy_sample: function (text_for_copy) {
+
+                // 原生方法
+                let con = document.getElementById('for_copy');
+                con.value = text_for_copy;
+                con.select();
+                if (document.execCommand('copy')) {
+                    document.execCommand('copy');
+                    this.snackbar = true;
+                    console.log('复制成功');
+                }
+                else {
+                    console.log('复制失败');
+                }
+
+
+                // 原生方法2 会选择被复制的区域
+                // /* 创建range对象   */
+                // const range = document.createRange();
+                // range.selectNode(document.getElementById('for_copy'));    // 设定range包含的节点对象
+                //
+                // /* 窗口的selection对象，表示用户选择的文本 */
+                // const selection = window.getSelection();
+                // if(selection.rangeCount > 0) selection.removeAllRanges(); // 将已经包含的已选择的对象清除掉
+                // selection.addRange(range);                                // 将要复制的区域的range对象添加到selection对象中
+                //
+                // document.execCommand('copy'); // 执行copy命令，copy用户选择的文本
+            }
+        },
+        beforeMount : function() {
+            this.pid = this.$route.params.pid;
+            var thisCom = this;
+            $.ajax({
+                //请求方式
+                type : "GET",
+                //请求地址
+                url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid + '/',
+                //请求成功
+                success : function(result) {
+                    thisCom.title = result.title;
+                    thisCom.time_limit = result.time_limit;
+                    thisCom.memory_limit = result.memory_limit;
+                    thisCom.description = result.description;
+                    thisCom.sample_inputs = result.sample_inputs;
+                    thisCom.sample_outputs = result.sample_outputs;
+                    thisCom.note = result.note;
+                },
+                //请求失败，包含具体的错误信息
+                error : function(e){
+                  console.log(e.status);
+                  console.log(e.responseText);
+                }
+            });
+        },
       
-      // 只改变参数是不会使页面刷新的
-      // 需要通过这个函数来执行参数更新的操作
-      beforeRouteUpdate (to, from, next) {
-          // react to route changes...
-          // don't forget to call next()
-          this.pid = to.params.pid;
-          var thisCom = this;
-          $.ajax({
-              //请求方式
-              type : "GET",
-              //请求地址
-              url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid,
-              //请求成功
-              success : function(result) {
+        // 只改变参数是不会使页面刷新的
+        // 需要通过这个函数来执行参数更新的操作
+        beforeRouteUpdate (to, from, next) {
+        // react to route changes...
+        // don't forget to call next()
+            this.pid = to.params.pid;
+            var thisCom = this;
+            $.ajax({
+                //请求方式
+                type : "GET",
+                //请求地址
+                url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid + '/',
+                //请求成功
+                success : function(result) {
                   thisCom.title = result.title;
                   thisCom.time_limit = result.time_limit;
                   thisCom.memory_limit = result.memory_limit;
@@ -163,15 +219,15 @@
                   thisCom.sample_inputs = result.sample_inputs;
                   thisCom.sample_outputs = result.sample_outputs;
                   thisCom.note = result.note;
-              },
-              //请求失败，包含具体的错误信息
-              error : function(e){
+                },
+                //请求失败，包含具体的错误信息
+                error : function(e){
                 console.log(e.status);
                 console.log(e.responseText);
-              }
-          });
-          next();
-      }
+                }
+            });
+            next();
+        }
     }
     
 </script>

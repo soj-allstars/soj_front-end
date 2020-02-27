@@ -12,10 +12,10 @@
                     <div class="text-center">
                         <v-row class="row_height">
                             <v-col cols='3' class="font-weight-black pa-0 ma-0 row_height">
-                                id
+                                Id
                             </v-col>
                             <v-col class="font-weight-black pa-0 ma-0">
-                                title
+                                Title
                             </v-col>
                         </v-row>
                         <v-row v-for="pbl in problems" :key="pbl.id"
