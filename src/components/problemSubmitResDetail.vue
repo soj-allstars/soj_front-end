@@ -122,7 +122,7 @@
 
 
                         thisCom.submit_time = thisCom.submit_time.replace('T', ' ');
-                        thisCom.submit_time = thisCom.submit_time.replace(/\.\d+/, ' ');
+                        thisCom.submit_time = thisCom.submit_time.replace(/\.\d+/, ' UTC');
 
                         console.log("sid:\n" + submission_id);
                         console.log('verdict:\n' + thisCom.verdict);

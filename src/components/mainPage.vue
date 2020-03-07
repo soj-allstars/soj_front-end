@@ -11,7 +11,7 @@
           <v-spacer />
           <v-toolbar-items>
               <v-btn text link :to="{ name: 'problemSet' }">题库</v-btn>
-              <v-btn text link :to="{ name: 'problem', params: { pid: 1 }}">比赛</v-btn>
+              <v-btn text link :to="{ name: 'contestSet', params: { pid: 1 }}">比赛</v-btn>
               <v-btn text link :to="{ name: 'problemSubmitRes', query: { submission_id: 1}}">提交</v-btn>
               <v-btn text lnkk :to="{ name: 'login' }">登录</v-btn>
               <v-btn text lnkk :to="{ name: 'addProblem' }">加题</v-btn>

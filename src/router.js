@@ -13,6 +13,8 @@ import problemSet from '@/components/problemSet'
 import login from '@/components/login'
 import addProblem from '@/components/addProblem'
 import problemSubmitResDetail from "@/components/problemSubmitResDetail";
+import contest from "@/components/contest";
+import contestSet from "@/components/contestSet";
 
 Vue.use(Router)
 
@@ -41,34 +43,44 @@ export default new Router({
                 {
                     path: '/problemSet',
                     name: 'problemSet',
-                    component: problemSet
+                    component: problemSet,
                 },
                 {
                     path: '/login',
                     name: 'login',
-                    component: login
+                    component: login,
                 },
                 {
                     path: '/addProblem',
                     name: 'addProblem',
-                    component: addProblem
+                    component: addProblem,
                 },
                 {
                     path: '/problemSubmitResDetail',
                     name: 'problemSubmitResDetail',
-                    component: problemSubmitResDetail
+                    component: problemSubmitResDetail,
+                },
+                {
+                    path: '/contestSet',
+                    name: 'contestSet',
+                    component: contestSet,
+                },
+                {
+                    path: '/contest/:cid',
+                    name: 'contest',
+                    component: contest,
                 }
             ]
         },
         {
             path: '/demoPage',
             name: 'demoPage',
-            component: demoPage
+            component: demoPage,
         },
         {
             path: '/youtube',
             name: 'youtube',
-            component: youtube
+            component: youtube,
         },
         {
             path: '/complex',
@@ -78,7 +90,7 @@ export default new Router({
                 {
                     path: "/shit",
                     name: 'shit',
-                    component: shit
+                    component: shit,
                 }
             ]
         }

@@ -320,7 +320,7 @@
                 note: '',
                 time_limit: 2000,
                 memory_limit: 131072,
-                sample_inputs: [""],
+                sample_inputs: [],
                 json_file: null,
                 json_text: '',
                 code_file: null,
