@@ -36,14 +36,20 @@
                             </v-col>
                             <v-col cols='2' class="pa-0 ma-0 row_height rela_pos "
                             >
-                                <v-card outlined tile class="row_height align-center justify-center d-flex"
-                                        :class="text_class[contests_status[index]]"
-                                        :title="contests_status[index]"
-                                        @mouseenter.stop="mouse_in($event, index)"
-                                        @mouseleave.stop="mouse_out($event, index)"
-                                >
-                                    {{cal_now_time_length(new Date(), ctst.start_time)}}
-                                </v-card>
+                                <v-tooltip top>
+                                    <template v-slot:activator="{ on }">
+                                        <v-card outlined tile class="row_height align-center justify-center d-flex"
+                                                :class="text_class[contests_status[index]]"
+                                                v-on="on"
+                                                @mouseenter.stop="mouse_in($event, index)"
+                                                @mouseleave.stop="mouse_out($event, index)"
+                                        >
+                                            {{cal_now_time_length(new Date(), ctst.start_time)}}
+                                        </v-card>
+                                    </template>
+                                    <span>{{contests_status[index]}}</span>
+                                </v-tooltip>
+
                             </v-col>
                             <v-col class="pa-0 ma-0 row_height">
                                 <v-btn text block outlined tile height="50px" class="text-none"
@@ -90,7 +96,7 @@
 
                 // 每个状态的字体颜色
                 text_class: {
-                    running: "red--text text--darken-3",
+                    running: "red--text text--darken-1",
                     scheduled: "light-blue--text text--darken-4",
                     ended: "grey--text text--darken-1",
                 },

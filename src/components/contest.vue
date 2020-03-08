@@ -7,13 +7,17 @@
             align='center'
             justify='center'
         >
-            <v-col cols="10">
+            <v-col cols="10"
+            >
                 <v-row
                     align="center"
                     justify="center"
                 >
-                    <v-col>
-                        <v-card class="pa-10">
+                    <v-col class="ma-0 pa-0"
+                    >
+                        <v-card class="pa-10"
+                                tile
+                        >
                             <v-row justify="space-between">
                                 <v-col cols="2">
                                     <span class="font-weight-bold">Begin:<br/></span>
@@ -56,6 +60,73 @@
                         </v-card>
                     </v-col>
                 </v-row>
+
+                <v-row align="center"
+                       justify="center"
+                >
+                    <v-col class="ma-0 pa-0"
+                    >
+                        <v-card tile>
+                            <v-tabs grow v-model="tabs">
+                                <v-tab v-for="title in tabs_title" :key="title.id">
+                                    {{title}}
+                                </v-tab>
+                            </v-tabs>
+
+                            <v-tabs-items v-model="tabs">
+                                <v-tab-item v-for="title in tabs_title" :key="title.id">
+                                    <v-card>
+                                        <v-simple-table>
+                                            <template v-slot:default>
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-sm-center">ID</th>
+                                                    <th class="text-sm-center">Problem</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr v-for="p in problems" :key="p.name">
+                                                    <td class="pa-0">
+                                                        <v-btn link
+                                                               text
+                                                               block
+                                                               :to="{ name: 'problem', params: { pid: p.id } }"
+                                                        >
+                                                            {{ p.id }}
+                                                        </v-btn>
+                                                    </td>
+                                                    <td class="pa-0">
+                                                        <v-btn link
+                                                               text
+                                                               block
+                                                               :to="{ name: 'problem', params: { pid: p.id } }"
+                                                        >
+                                                            {{ p.title }}
+                                                        </v-btn>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </template>
+                                        </v-simple-table>
+                                    </v-card>
+                                </v-tab-item>
+                            </v-tabs-items>
+
+                        </v-card>
+                    </v-col>
+                </v-row>
+
+                <v-row align="center"
+                       justify="center"
+                       v-if="description"
+                >
+                    <v-col class="mx-0 px-0"
+                    >
+                        <v-card class="pa-10">
+                            <h4>{{description}} chishi shit</h4>
+                        </v-card>
+                    </v-col>
+                </v-row>
             </v-col>
         </v-row>
     </v-container>
@@ -89,14 +160,23 @@
 
                 // 用于调节字体颜色的class
                 text_class: {
-                    running: "red--text text--darken-3",
+                    running: "red--text text--darken-1",
                     scheduled: "light-blue--text text--darken-4",
                     ended: "grey--text text--darken-1",
                 },
 
-
                 // 用于停止时间刷新的值
                 interval_value: null,
+
+
+
+                /* 选项卡(Tab)相关 */
+
+                // tab的v-model
+                tabs: null,
+
+                // tab的标题
+                tabs_title: ["Problems", "Status", "Rank", "Comments"],
             }
         },
 
