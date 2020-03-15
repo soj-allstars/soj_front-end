@@ -2,6 +2,7 @@
     <v-container
         fluid
         no-gutters
+        class="flex-nowrap"
     >
         <v-row
             align='center'
@@ -74,44 +75,170 @@
                             </v-tabs>
 
                             <v-tabs-items v-model="tabs">
-                                <v-tab-item v-for="title in tabs_title" :key="title.id">
-                                    <v-card>
-                                        <v-simple-table>
+                                <v-tab-item>
+                                    <v-card outlined>
+                                        <v-simple-table fixed-header>
                                             <template v-slot:default>
                                                 <thead>
-                                                <tr>
-                                                    <th class="text-sm-center">ID</th>
-                                                    <th class="text-sm-center">Problem</th>
-                                                </tr>
+                                                    <tr>
+                                                        <th class="text-sm-center">No.</th>
+                                                        <th class="text-sm-center">Problem</th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr v-for="p in problems" :key="p.name">
-                                                    <td class="pa-0">
-                                                        <v-btn link
-                                                               text
-                                                               block
-                                                               :to="{ name: 'problem', params: { pid: p.id } }"
-                                                        >
-                                                            {{ p.id }}
-                                                        </v-btn>
-                                                    </td>
-                                                    <td class="pa-0">
-                                                        <v-btn link
-                                                               text
-                                                               block
-                                                               :to="{ name: 'problem', params: { pid: p.id } }"
-                                                        >
-                                                            {{ p.title }}
-                                                        </v-btn>
-                                                    </td>
-                                                </tr>
+                                                    <tr v-for="(p, index) in problems" :key="p.name">
+                                                        <td class="pa-0">
+                                                            <v-btn text block link tile
+                                                                   class="text-none"
+                                                                   :to="{ name: 'problem', params: { pid: p.id } }"
+                                                            >
+                                                                {{ num_to_alpha(index) }}
+                                                            </v-btn>
+                                                        </td>
+                                                        <td class="pa-0">
+                                                            <v-btn text block link tile
+                                                                   class="text-none"
+                                                                   :to="{ name: 'problem', params: { pid: p.id } }"
+                                                            >
+                                                                {{ p.title }}
+                                                            </v-btn>
+                                                        </td>
+                                                    </tr>
                                                 </tbody>
                                             </template>
                                         </v-simple-table>
                                     </v-card>
                                 </v-tab-item>
-                            </v-tabs-items>
+                                <v-tab-item>
+                                    <v-card outlined>
+                                        reserved for status ( or nothing )
+                                    </v-card>
+                                </v-tab-item>
+                                <v-tab-item>
+                                    <div class="show_scroll">
+                                        <v-hover
+                                            v-slot:default="{ hover }"
+                                        >
+                                            <div class="d-flex flex-nowrap">
+                                                <v-card outlined tile
+                                                        min-width="50"
+                                                        min-height="50"
+                                                        class="d-inline-flex align-center justify-center"
+                                                        :color="hover ? 'light-blue lighten-5' : ''"
+                                                        :elevation="hover ? '2' : '0'"
+                                                >
+                                                    <span class="font-weight-bold">Rank</span>
+                                                </v-card>
 
+                                                <v-card outlined tile
+                                                        min-width="250"
+                                                        min-height="50"
+                                                        class="d-inline-flex align-center justify-center"
+                                                        :color="hover ? 'light-blue lighten-5' : ''"
+                                                        :elevation="hover ? '2' : '0'"
+                                                >
+                                                    <span class="font-weight-bold">Name</span>
+                                                </v-card>
+                                                <v-card outlined tile
+                                                        min-width="120"
+                                                        min-height="50"
+                                                        class="d-inline-flex align-center justify-center"
+                                                        :color="hover ? 'light-blue lighten-5' : ''"
+                                                        :elevation="hover ? '2' : '0'"
+                                                >
+                                                    <span class="font-weight-bold">Penalty</span>
+                                                </v-card>
+
+                                                <v-card outlined tile
+                                                        min-width="120"
+                                                        min-height="50"
+                                                        class="d-inline-flex align-center justify-center"
+                                                        v-for="(pbl, index) in problems" :key="pbl.key"
+                                                        :color="hover ? 'light-blue lighten-5' : ''"
+                                                        :elevation="hover ? '2' : '0'"
+                                                >
+                                                    <span class="font-weight-bold">
+                                                        {{String.fromCharCode('A'.charCodeAt(0) + index) }}
+                                                    </span>
+                                                </v-card>
+                                            </div>
+                                        </v-hover>
+                                        <v-hover v-for="(std, index) in standings" :key="std.id"
+                                                 v-slot:default="{ hover }"
+                                        >
+                                            <div class="d-flex flex-nowrap">
+                                                <v-card outlined tile
+                                                        min-width="50"
+                                                        min-height="50"
+                                                        class="d-inline-flex align-center justify-center"
+                                                        :color="hover ? 'light-blue lighten-5' : ''"
+                                                        :elevation="hover ? '2' : '0'"
+                                                >
+                                                    {{index + 1}}
+                                                </v-card>
+
+                                                <v-card outlined tile
+                                                        min-width="250"
+                                                        min-height="50"
+                                                        class="d-inline-flex align-center justify-center"
+                                                        :color="hover ? 'light-blue lighten-5' : ''"
+                                                        :elevation="hover ? '2' : '0'"
+                                                >
+                                                    {{std.username}}
+                                                </v-card>
+                                                <v-card outlined tile
+                                                        min-width="120"
+                                                        min-height="50"
+                                                        class="d-inline-flex align-center justify-center"
+                                                        color="orange lighten-5"
+                                                        :elevation="hover ? '2' : '0'"
+                                                >
+                                                    {{seconds_to_hms(std.total_penalty)}}
+                                                </v-card>
+
+                                                <v-card outlined tile
+                                                        min-width="120"
+                                                        min-height="50"
+                                                        class="d-inline align-center justify-center"
+                                                        v-for="(pbl, index) in problems" :key="pbl.key"
+                                                        :color="std.AC_times[index + 1] ? 'light-green lighten-5' :
+                                                                    (std.wrong_numbers[index + 1] ? 'red lighten-5' :
+                                                                        (hover ? 'light-blue lighten-5' :
+                                                                        '')
+                                                                    )"
+                                                        :elevation="hover ? '2' : '0'"
+                                                >
+                                                    <v-row no-gutters
+                                                           v-if="std.AC_times[index + 1]"
+                                                    >
+                                                        <v-col class="d-flex justify-center align-center">
+                                                            {{seconds_to_hms(std.AC_times[index + 1])}}
+                                                            <!-- JSON中从1开始，所以要+1 -->
+                                                        </v-col>
+                                                    </v-row>
+                                                    <v-row no-gutters
+                                                           v-if="std.wrong_numbers[index + 1]"
+                                                    >
+                                                        <v-col class="d-flex justify-center align-center">
+                                                            <span class="caption">
+                                                                ( -{{std.wrong_numbers[index + 1]}} )
+                                                            </span>
+                                                        </v-col>
+                                                    </v-row>
+                                                </v-card>
+                                            </div>
+                                        </v-hover>
+
+
+                                    </div>
+
+                                </v-tab-item>
+                                <v-tab-item>
+                                    <v-card outlined>
+                                        reserved for comment ( or nothing )
+                                    </v-card>
+                                </v-tab-item>
+                            </v-tabs-items>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -123,7 +250,7 @@
                     <v-col class="mx-0 px-0"
                     >
                         <v-card class="pa-10">
-                            <h4>{{description}} chishi shit</h4>
+                            <h4>{{description}}</h4>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -150,6 +277,35 @@
                 "is_running": true,
                 "registered": true,
                 "category": "string",
+                "standings": [
+                    {
+                        "user_id": 2,
+                        "username": "yjp",
+                        "solved_number": 2,
+                        "total_penalty": 1026560.72247,
+                        "AC_times": {
+                            "1": 511965.375124,
+                            "2": 510995.347346
+                        },
+                        "wrong_numbers": {
+                            "1": 1,
+                            "2": 2,
+                            "3": 1,
+                        }
+                    },
+                    {
+                        "user_id": 1,
+                        "username": "soj",
+                        "solved_number": 1,
+                        "total_penalty": 514583.141346,
+                        "AC_times": {
+                            "1": 510983.141346
+                        },
+                        "wrong_numbers": {
+                            "1": 3
+                        }
+                    }
+                ],
 
                 contest_status: "",
                 start_date: null,
@@ -160,7 +316,7 @@
 
                 // 用于调节字体颜色的class
                 text_class: {
-                    running: "red--text text--darken-1",
+                    running: "red--text text--lighten-1",
                     scheduled: "light-blue--text text--darken-4",
                     ended: "grey--text text--darken-1",
                 },
@@ -198,17 +354,21 @@
                 return t;
             },
 
-            cal_time_hms: function(prev, post) {
-                let time_diff = Math.floor((post.getTime() - prev.getTime()) / 1000);
-                let h = this.fill_zero(Math.floor(time_diff / (60 * 60)));
+            seconds_to_hms: function(seconds) {
+                if (!seconds) return ;
 
-                time_diff = time_diff % (60 * 60);
-                let min = this.fill_zero(Math.floor(time_diff / (60)));
-
-                time_diff = time_diff % (60);
-                let s = this.fill_zero(Math.floor(time_diff));
+                let h = this.fill_zero(Math.floor(seconds / (60 * 60)));
+                seconds = seconds % (60 * 60);
+                let min = this.fill_zero(Math.floor(seconds / (60)));
+                seconds = seconds % (60);
+                let s = this.fill_zero(Math.floor(seconds));
 
                 return h + ':' + min + ':' + s;
+            },
+
+            cal_time_hms: function(prev, post) {
+                let seconds_diff = Math.floor((post.getTime() - prev.getTime()) / 1000);
+                return this.seconds_to_hms(seconds_diff);
             },
 
             updateTime: function () {
@@ -230,8 +390,14 @@
                     this.contest_status = "running";
                     this.elapsed_time = this.cal_time_hms(this.start_date, now);
                     this.remain_time = this.cal_time_hms(now, this.end_date);
-                    this.elapsed_tatio = (now.getTime() - this.start_date.getTime()) / (this.end_date.getTime() - this.start_date.getTime()) * 100;
+                    this.elapsed_ratio = (now.getTime() - this.start_date.getTime()) / (this.end_date.getTime() - this.start_date.getTime()) * 100;
                 }
+            },
+
+
+            num_to_alpha: function (num) {
+                let position_zero = 'A'.charCodeAt(0);
+                return String.fromCharCode(num + position_zero);
             }
         },
 
@@ -259,7 +425,32 @@
                     thisCom.start_date = new Date(thisCom.start_time);
                     thisCom.end_date = new Date(thisCom.end_time);
 
+                    thisCom.updateTime();
                     thisCom.interval_value = setInterval(thisCom.updateTime, 1000);
+
+
+                    let ws = new WebSocket("ws://" + location.hostname + "/ws/contest/standings/");
+
+                    ws.onopen = function(evt) {
+                        console.log("WS connection open ...");
+                        ws.send('{"contest_id":' + thisCom.cid + '}');
+                    };
+
+                    ws.onmessage = function(evt) {
+                        console.log( "WS received Message: " + evt.data);
+                        let recv_data = JSON.parse(evt.data);
+
+                        if (recv_data.ok) {
+                            thisCom.standings = evt.standings;
+                        }
+                        else {
+                            alert(recv_data.detail);
+                        }
+                    };
+
+                    ws.onclose = function(evt) {
+                        console.log("WS connection closed.");
+                    };
                 },
                 // 请求失败，包含具体的错误信息
                 error : function(e){
@@ -267,11 +458,6 @@
                     console.log(e.responseText);
                 }
             });
-
-            // thisCom.start_date = new Date(thisCom.start_time);
-            // thisCom.end_date = new Date(thisCom.end_time);
-            //
-            // thisCom.interval_value = setInterval(thisCom.updateTime, 1000);
         },
 
 
@@ -301,6 +487,8 @@
 
                     thisCom.start_date = new Date(thisCom.start_time);
                     thisCom.end_date = new Date(thisCom.end_time);
+
+                    thisCom.updateTime();
                     thisCom.interval_value = setInterval(thisCom.updateTime, 1000);
                 },
                 // 请求失败，包含具体的错误信息
@@ -316,4 +504,10 @@
 </script>
 
 <style scoped>
+    .th_length {
+        width: 500px !important;
+    }
+    .show_scroll {
+        overflow-x: auto;
+    }
 </style>

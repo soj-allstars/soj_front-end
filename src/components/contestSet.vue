@@ -9,67 +9,104 @@
         >
             <v-col cols='10'>
                 <v-card class='pa-10'>
-                    <div class="text-center">
-                        <v-row class="row_height">
-                            <v-col cols='1' class="font-weight-black pa-0 ma-0 row_height">
-                                ID
-                            </v-col>
-                            <v-col cols='2' class="font-weight-black pa-0 ma-0 row_height">
-                                Begin Time
-                            </v-col>
-                            <v-col class="font-weight-black pa-0 ma-0">
-                                Name
-                            </v-col>
-                            <v-col cols='2' class="font-weight-black pa-0 ma-0 row_height">
-                                Length
-                            </v-col>
-
-                        </v-row>
+                    <div class="d-inline-flex justify-start align-start flex-wrap">
                         <v-row v-for="(ctst, index) in contests" :key="ctst.id"
-                               class="row_height"
-                               align="center"
-                               justify="center">
-                            <v-col cols='1' class="pa-0 ma-0 row_height rela_pos ">
-                                <v-card outlined tile class="row_height align-center justify-center d-flex">
-                                    {{ctst.id}}
-                                </v-card>
-                            </v-col>
-                            <v-col cols='2' class="pa-0 ma-0 row_height rela_pos "
-                            >
-                                <v-tooltip top>
-                                    <template v-slot:activator="{ on }">
-                                        <v-card outlined tile class="row_height align-center justify-center d-flex"
-                                                :class="text_class[contests_status[index]]"
-                                                v-on="on"
-                                                @mouseenter.stop="mouse_in($event, index)"
-                                                @mouseleave.stop="mouse_out($event, index)"
+                               class="row_length ma-2"
+                               no-gutters
+                        >
+                            <v-col>
+                                <v-card outlined tile class="px-7 py-5"
+                                        :color="card_class[contests_status[index]]"
+                                >
+                                    <v-row>
+                                        <v-col class="pt-0 pb-1">
+                                            <v-btn text block tile
+                                                   link :to="{ name:'contest', params: { cid: ctst.id } }"
+                                                   class="headline font-weight-medium d-flex justify-start px-0"
+                                                   :class="text_class[contests_status[index]]"
+                                            >
+                                                {{ctst.name}}
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                    <div class="d-flex justify-start">
+                                        <v-tooltip bottom color="#333">
+                                            <template v-slot:activator="{ on }">
+                                                <span class="caption"
+                                                      :class="text_class[contests_status[index]]"
+                                                      v-on="on"
+                                                >
+                                                    <v-icon small :color="icon_class[contests_status[index]]"
+                                                    >mdi-calendar</v-icon>
+                                                    {{start_time_simplified[index]}}
+                                                </span>
+                                            </template>
+                                            <span>{{contests_status[index]}}</span>
+                                        </v-tooltip>
+                                        <span class="caption ml-8"
+                                              :class="text_class[contests_status[index]]"
                                         >
-                                            {{cal_now_time_length(new Date(), ctst.start_time)}}
-                                        </v-card>
-                                    </template>
-                                    <span>{{contests_status[index]}}</span>
-                                </v-tooltip>
-
-                            </v-col>
-                            <v-col class="pa-0 ma-0 row_height">
-                                <v-btn text block outlined tile height="50px" class="text-none"
-                                       link :to="{ name:'contest', params: { cid: ctst.id } }">{{ctst.name}}</v-btn>
-                            </v-col>
-                            <v-col cols='2' class="pa-0 ma-0 row_height">
-                                <v-card outlined tile class="row_height align-center justify-center d-flex text--secondary">
-                                    {{cal_time_length(ctst.start_time, ctst.end_time)}}
+                                            <v-icon small :color="icon_class[contests_status[index]]"
+                                            >mdi-clock</v-icon>
+                                            <span class="pl-1">{{cal_hour_length(ctst.start_time, ctst.end_time)}}</span>
+                                        </span>
+                                    </div>
                                 </v-card>
                             </v-col>
-
                         </v-row>
+                    </div>
 
+
+<!--                    <div class="text-center">-->
+<!--                        <v-row class="row_height">-->
+<!--                            <v-col cols='2' class="font-weight-black pa-0 ma-0 row_height">-->
+<!--                                Begin Time-->
+<!--                            </v-col>-->
+<!--                            <v-col class="font-weight-black pa-0 ma-0">-->
+<!--                                Name-->
+<!--                            </v-col>-->
+<!--                            <v-col cols='2' class="font-weight-black pa-0 ma-0 row_height">-->
+<!--                                Length-->
+<!--                            </v-col>-->
+
+<!--                        </v-row>-->
+<!--                        <v-row v-for="(ctst, index) in contests" :key="ctst.id"-->
+<!--                               class="row_height"-->
+<!--                               align="center"-->
+<!--                               justify="center">-->
+<!--                            <v-col cols='2' class="pa-0 ma-0 row_height rela_pos ">-->
+<!--                                <v-tooltip top>-->
+<!--                                    <template v-slot:activator="{ on }">-->
+<!--                                        <v-card outlined tile class="row_height align-center justify-center d-flex text&#45;&#45;secondary"-->
+<!--                                                :class="text_class[contests_status[index]]"-->
+<!--                                                v-on="on"-->
+<!--                                        >-->
+<!--                                            {{start_time_simplified[index]}}-->
+<!--                                        </v-card>-->
+<!--                                    </template>-->
+<!--                                    <span>{{contests_status[index]}}</span>-->
+<!--                                </v-tooltip>-->
+
+<!--                            </v-col>-->
+<!--                            <v-col class="pa-0 ma-0 row_height">-->
+<!--                                <v-btn text block outlined tile height="50px" class="text-none"-->
+<!--                                       link :to="{ name:'contest', params: { cid: ctst.id } }">{{ctst.name}}</v-btn>-->
+<!--                            </v-col>-->
+<!--                            <v-col cols='2' class="pa-0 ma-0 row_height">-->
+<!--                                <v-card outlined tile class="row_height align-center justify-center d-flex text&#45;&#45;secondary">-->
+<!--                                    {{cal_time_length(ctst.start_time, ctst.end_time)}}-->
+<!--                                </v-card>-->
+<!--                            </v-col>-->
+
+<!--                        </v-row>-->
+<!--                    </div>-->
 
                         <v-pagination
                                 v-model="page"
                                 :length="6"
                                 class="mt-10"
                         ></v-pagination>
-                    </div>
+
 
                 </v-card>
             </v-col>
@@ -95,50 +132,27 @@
                 contests_status: [],
 
                 // 每个状态的字体颜色
+                icon_class: {
+                    running: "white",
+                    scheduled: "blue darken-4",
+                    ended: "grey darken-1",
+                },
                 text_class: {
-                    running: "red--text text--darken-1",
-                    scheduled: "light-blue--text text--darken-4",
+                    running: "white--text",
+                    scheduled: "blue--text text--darken-4",
                     ended: "grey--text text--darken-1",
+                },
+                card_class: {
+                    running: "red lighten-1",
+                    scheduled: "blue lighten-5",
+                    ended: "",
                 },
 
                 nowTime: new Date(),
                 contest_cnt: 0,
                 prev: null,
                 next: null,
-                contests: [
-                    {
-                        "id": 0,
-                        "name": "number 0 contest",
-                        "start_time": "2020-03-05T17:23:39.639++08:00",
-                        "end_time": "2020-03-05T19:29:39.639+08:00",
-                        "is_running": false,
-                        "category": "string",
-                    },
-                    {
-                        "id": 1,
-                        "name": "to be expert in BFS!",
-                        "start_time": "2020-03-05T17:23:39.639+08:00",
-                        "end_time": "2021-03-05T17:36:39.639+08:00",
-                        "is_running": true,
-                        "category": "string",
-                    },
-                    {
-                        "id": 12345678,
-                        "name": "DYNAMIC PROGRAMMING",
-                        "start_time": "2020-03-08T17:23:39.639+08:00",
-                        "end_time": "2020-03-09T17:59:59.639+08:00",
-                        "is_running": false,
-                        "category": "string",
-                    },
-                    {
-                        "id": 12345679,
-                        "name": "DYNAMIC PROGRAMMING",
-                        "start_time": "2020-03-08T17:23:39.639+08:00",
-                        "end_time": "2020-03-08T17:23:56.639+08:00",
-                        "is_running": false,
-                        "category": "string",
-                    },
-                ],
+                contests: [],
             }
         },
 
@@ -157,22 +171,22 @@
                 }
             },
 
-            cal_now_time_length: function (
-                now /* Date */,
-                st_str /* string */) {
-                let st = new Date(st_str);
-                let end_text = "";
-                if (now >= st) {
-                    end_text = " Ago";
-                    let tmp = now;
-                    now = st;
-                    st = tmp;
-                } else {
-                    end_text = " Later";
-                }
-
-                return this.cal_time_length(now, st) + end_text;
-            },
+            // cal_now_time_length: function (
+            //     now /* Date */,
+            //     st_str /* string */) {
+            //     let st = new Date(st_str);
+            //     let end_text = "";
+            //     if (now >= st) {
+            //         end_text = " Ago";
+            //         let tmp = now;
+            //         now = st;
+            //         st = tmp;
+            //     } else {
+            //         end_text = " Later";
+            //     }
+            //
+            //     return this.cal_time_length(now, st) + end_text;
+            // },
 
             cal_time_length: function (st_str, et_str) {
                 let st = new Date(st_str);
@@ -215,21 +229,34 @@
                         return hours + h_str;
                     }
                 }
-                return '< 1 minute';
+
+                if (minutes > 0) {
+                    let m_str = ' Minute';
+                    if (minutes > 1) {
+                        m_str += 's';
+                    }
+                    return minutes + m_str;
+                }
+
+                return '< 1 Minute';
             },
 
-            mouse_in: function (evt, index) {
-                let el = evt.currentTarget;
-                el.innerText = this.start_time_simplified[index];
-                console.log('IN');
-            },
+            cal_hour_length: function (st_str, et_str) {
+                let st = new Date(st_str);
+                let et = new Date(et_str);
 
-            mouse_out: function (evt, index) {
-                let el = evt.currentTarget;
-                el.innerText = this.cal_now_time_length(new Date(), this.contests[index].start_time);
-                console.log('OUT');
+                if (et < st) {
+                    return "invalid";
+                }
+
+                let dateDiff = (et.getTime() - st.getTime()) / 1000;     //时间差的秒数
+                let hours = dateDiff / (60 * 60);
+                hours = hours.toFixed(1);
+                return hours + " hours";
             },
         },
+
+
 
 
 
@@ -247,6 +274,7 @@
                     thisCom.prev = result.previous;
                     thisCom.next = result.next;
                     thisCom.contests = result.results;
+                    thisCom.nowTime = new Date();
 
                     // 给每条比赛项目算出所需要的属性
                     thisCom.contests.forEach(
@@ -286,6 +314,11 @@
     .row_height {
         height: 50px;
     }
+    .row_length {
+        width: 500px;
+    }
+
+
     .child {
         background: orange;
         position: absolute;
