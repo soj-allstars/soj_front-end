@@ -24,11 +24,11 @@
                          justify="center">
                             <v-col cols='3' class="pa-0 ma-0 row_height">
                                 <v-btn text block outlined tile height="50px" class="text-none"
-                                link :to="{ name:'problem', params: { pid: pbl.id } }">{{pbl.id}}</v-btn>
+                                link :to="{ name:'problem', query: { pid: pbl.id } }">{{pbl.id}}</v-btn>
                             </v-col>
                             <v-col class="pa-0 ma-0 row_height">
                                 <v-btn text block outlined tile height="50px" class="text-none"
-                                link :to="{ name:'problem', params: { pid: pbl.id } }">{{pbl.title}}</v-btn>
+                                link :to="{ name:'problem', query: { pid: pbl.id } }">{{pbl.title}}</v-btn>
                             </v-col>
                         </v-row>
                         <v-pagination

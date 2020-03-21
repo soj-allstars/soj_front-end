@@ -90,7 +90,7 @@
                                                         <td class="pa-0">
                                                             <v-btn text block link tile
                                                                    class="text-none"
-                                                                   :to="{ name: 'problem', params: { pid: p.id } }"
+                                                                   :to="{ name: 'contestProblem', query: { pid: p.id, cid: cid } }"
                                                             >
                                                                 {{ num_to_alpha(index) }}
                                                             </v-btn>
@@ -98,7 +98,7 @@
                                                         <td class="pa-0">
                                                             <v-btn text block link tile
                                                                    class="text-none"
-                                                                   :to="{ name: 'problem', params: { pid: p.id } }"
+                                                                   :to="{ name: 'contestProblem', query: { pid: p.id, cid: cid } }"
                                                             >
                                                                 {{ p.title }}
                                                             </v-btn>
@@ -109,11 +109,15 @@
                                         </v-simple-table>
                                     </v-card>
                                 </v-tab-item>
+
+
                                 <v-tab-item>
                                     <v-card outlined>
-                                        reserved for status ( or nothing )
+                                        reserved for detail
                                     </v-card>
                                 </v-tab-item>
+
+
                                 <v-tab-item>
                                     <div class="show_scroll">
                                         <v-hover
@@ -167,6 +171,8 @@
                                                  v-slot:default="{ hover }"
                                         >
                                             <div class="d-flex flex-nowrap">
+
+                                                <!--排名-->
                                                 <v-card outlined tile
                                                         min-width="50"
                                                         min-height="50"
@@ -177,6 +183,7 @@
                                                     {{index + 1}}
                                                 </v-card>
 
+                                                <!--用户名显示-->
                                                 <v-card outlined tile
                                                         min-width="250"
                                                         min-height="50"
@@ -196,6 +203,7 @@
                                                     {{seconds_to_hms(std.total_penalty)}}
                                                 </v-card>
 
+                                                <!--问题的排序-->
                                                 <v-card outlined tile
                                                         min-width="120"
                                                         min-height="50"
@@ -228,8 +236,6 @@
                                                 </v-card>
                                             </div>
                                         </v-hover>
-
-
                                     </div>
 
                                 </v-tab-item>
@@ -324,8 +330,6 @@
                 // 用于停止时间刷新的值
                 interval_value: null,
 
-
-
                 /* 选项卡(Tab)相关 */
 
                 // tab的v-model
@@ -402,8 +406,9 @@
         },
 
         beforeMount() {
-            this.cid = this.$route.params.cid;
+            this.cid = this.$route.query.cid;
             let thisCom = this;
+            console.log('beforemount: ' + this.cid);
 
             $.ajax({
                 // 请求方式
@@ -412,7 +417,6 @@
                 url : thisCom.serveUrl() + '/api/contest/' + this.cid + '/',
                 // 请求成功
                 success : function(result) {
-                    thisCom.cid = result.cid;
                     thisCom.name = result.name;
                     thisCom.description = result.description;
                     thisCom.problems = result.problems;
@@ -434,6 +438,7 @@
                     ws.onopen = function(evt) {
                         console.log("WS connection open ...");
                         ws.send('{"contest_id":' + thisCom.cid + '}');
+                        console.log('contest_id: ' + thisCom.cid);
                     };
 
                     ws.onmessage = function(evt) {
@@ -441,7 +446,7 @@
                         let recv_data = JSON.parse(evt.data);
 
                         if (recv_data.ok) {
-                            thisCom.standings = evt.standings;
+                            thisCom.standings = recv_data.standings;
                         }
                         else {
                             alert(recv_data.detail);
@@ -466,7 +471,7 @@
         beforeRouteUpdate (to, from, next) {
             // react to route changes...
             // don't forget to call next()
-            this.cid = to.params.cid;
+            this.cid = to.query.cid;
             let thisCom = this;
             $.ajax({
                 // 请求方式
@@ -508,6 +513,6 @@
         width: 500px !important;
     }
     .show_scroll {
-        overflow-x: auto;
+        overflow: auto;
     }
 </style>

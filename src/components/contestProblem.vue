@@ -18,7 +18,7 @@
                 >
                     <v-row>
                         
-                        <v-col><v-btn link :to="{ path: '/problemSubmit', query: { pid: pid }}"
+                        <v-col><v-btn link :to="{ path: '/contestProblemSubmit', query: { pid: pid, cid: cid }}"
                          block color="light-blue darken-3" class="button_font white_font">
                             <v-icon class="button_icon">mdi-cloud-upload</v-icon>
                             <span>提交</span>
@@ -139,7 +139,10 @@
               description: "",
               sample_inputs: [],
               sample_outputs: [],
-              note: ''
+              note: '',
+
+                // 比赛的参数
+                cid: null,
             }
         },
         methods: {
@@ -174,6 +177,7 @@
         },
         beforeMount : function() {
             this.pid = this.$route.query.pid;
+            this.cid = this.$route.query.cid;
             var thisCom = this;
             $.ajax({
                 //请求方式
@@ -204,6 +208,7 @@
         // react to route changes...
         // don't forget to call next()
             this.pid = to.query.pid;
+
             var thisCom = this;
             $.ajax({
                 //请求方式
@@ -227,7 +232,15 @@
                 }
             });
             next();
-        }
+        },
+
+        beforeRouteEnter (to, from, next) {
+            // 在渲染该组件的对应路由被 confirm 前调用
+            // 不！能！获取组件实例 `this`
+            // 因为当守卫执行前，组件实例还没被创建
+            next();
+
+        },
     }
     
 </script>

@@ -15,10 +15,12 @@ import addProblem from '@/components/addProblem'
 import problemSubmitResDetail from "@/components/problemSubmitResDetail";
 import contest from "@/components/contest";
 import contestSet from "@/components/contestSet";
+import contestProblem from "@/components/contestProblem";
+import contestProblemSubmit from "@/components/contestProblemSubmit";
 
-Vue.use(Router)
+Vue.use(Router);
 
-export default new Router({
+const routes = {
     routes: [
         {
             path: '/',
@@ -26,7 +28,7 @@ export default new Router({
             component: mainPage,
             children: [
                 {
-                    path: '/problem/:pid',
+                    path: '/problem',
                     name: 'problem',
                     component: problem,
                 },
@@ -66,10 +68,20 @@ export default new Router({
                     component: contestSet,
                 },
                 {
-                    path: '/contest/:cid',
+                    path: '/contest/',
                     name: 'contest',
                     component: contest,
-                }
+                },
+                {
+                    path: '/contestProblem',
+                    name: 'contestProblem',
+                    component: contestProblem,
+                },
+                {
+                    path: '/contestProblemSubmit',
+                    name: 'contestProblemSubmit',
+                    component: contestProblemSubmit,
+                },
             ]
         },
         {
@@ -95,4 +107,15 @@ export default new Router({
             ]
         }
     ]
-})
+};
+const router = new Router(routes);
+
+// router.beforeEach((to, from, next) => {
+//     for(let a of to.matched) {
+//         console.log(a.name + '\n');
+//     }
+//     next();
+// });
+
+
+export default router;

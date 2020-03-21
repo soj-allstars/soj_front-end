@@ -21,7 +21,7 @@
                                     <v-row>
                                         <v-col class="pt-0 pb-1">
                                             <v-btn text block tile
-                                                   link :to="{ name:'contest', params: { cid: ctst.id } }"
+                                                   link :to="{ name:'contest', query: { cid: ctst.id } }"
                                                    class="headline font-weight-medium d-flex justify-start px-0"
                                                    :class="text_class[contests_status[index]]"
                                             >
