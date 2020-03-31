@@ -183,7 +183,7 @@
                 //请求方式
                 type : "GET",
                 //请求地址
-                url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid + '/',
+                url : thisCom.serveUrl() + '/api/contest/problem/' + thisCom.cid + '/' + thisCom.pid + '/',
                 //请求成功
                 success : function(result) {
                     thisCom.title = result.title;
@@ -204,35 +204,35 @@
       
         // 只改变参数是不会使页面刷新的
         // 需要通过这个函数来执行参数更新的操作
-        beforeRouteUpdate (to, from, next) {
-        // react to route changes...
-        // don't forget to call next()
-            this.pid = to.query.pid;
-
-            var thisCom = this;
-            $.ajax({
-                //请求方式
-                type : "GET",
-                //请求地址
-                url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid + '/',
-                //请求成功
-                success : function(result) {
-                  thisCom.title = result.title;
-                  thisCom.time_limit = result.time_limit;
-                  thisCom.memory_limit = result.memory_limit;
-                  thisCom.description = result.description;
-                  thisCom.sample_inputs = result.sample_inputs;
-                  thisCom.sample_outputs = result.sample_outputs;
-                  thisCom.note = result.note;
-                },
-                //请求失败，包含具体的错误信息
-                error : function(e){
-                console.log(e.status);
-                console.log(e.responseText);
-                }
-            });
-            next();
-        },
+        // beforeRouteUpdate (to, from, next) {
+        // // react to route changes...
+        // // don't forget to call next()
+        //     this.pid = to.query.pid;
+        //
+        //     var thisCom = this;
+        //     $.ajax({
+        //         //请求方式
+        //         type : "GET",
+        //         //请求地址
+        //         url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid + '/',
+        //         //请求成功
+        //         success : function(result) {
+        //           thisCom.title = result.title;
+        //           thisCom.time_limit = result.time_limit;
+        //           thisCom.memory_limit = result.memory_limit;
+        //           thisCom.description = result.description;
+        //           thisCom.sample_inputs = result.sample_inputs;
+        //           thisCom.sample_outputs = result.sample_outputs;
+        //           thisCom.note = result.note;
+        //         },
+        //         //请求失败，包含具体的错误信息
+        //         error : function(e){
+        //         console.log(e.status);
+        //         console.log(e.responseText);
+        //         }
+        //     });
+        //     next();
+        // },
 
         beforeRouteEnter (to, from, next) {
             // 在渲染该组件的对应路由被 confirm 前调用

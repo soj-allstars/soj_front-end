@@ -90,7 +90,7 @@
                                                         <td class="pa-0">
                                                             <v-btn text block link tile
                                                                    class="text-none"
-                                                                   :to="{ name: 'contestProblem', query: { pid: p.id, cid: cid } }"
+                                                                   :to="{ name: 'contestProblem', query: { pid: num_to_alpha(index), cid: cid } }"
                                                             >
                                                                 {{ num_to_alpha(index) }}
                                                             </v-btn>
@@ -98,7 +98,7 @@
                                                         <td class="pa-0">
                                                             <v-btn text block link tile
                                                                    class="text-none"
-                                                                   :to="{ name: 'contestProblem', query: { pid: p.id, cid: cid } }"
+                                                                   :to="{ name: 'contestProblem', query: { pid: num_to_alpha(index), cid: cid } }"
                                                             >
                                                                 {{ p.title }}
                                                             </v-btn>
@@ -209,27 +209,27 @@
                                                         min-height="50"
                                                         class="d-inline align-center justify-center"
                                                         v-for="(pbl, index) in problems" :key="pbl.key"
-                                                        :color="std.AC_times[index + 1] ? 'light-green lighten-5' :
-                                                                    (std.wrong_numbers[index + 1] ? 'red lighten-5' :
+                                                        :color="std.AC_times[String.fromCharCode('A'.charCodeAt(0) + index)] ? 'light-green lighten-5' :
+                                                                    (std.wrong_numbers[String.fromCharCode('A'.charCodeAt(0) + index)] ? 'red lighten-5' :
                                                                         (hover ? 'light-blue lighten-5' :
                                                                         '')
                                                                     )"
                                                         :elevation="hover ? '2' : '0'"
                                                 >
                                                     <v-row no-gutters
-                                                           v-if="std.AC_times[index + 1]"
+                                                           v-if="std.AC_times[String.fromCharCode('A'.charCodeAt(0) + index)]"
                                                     >
                                                         <v-col class="d-flex justify-center align-center">
-                                                            {{seconds_to_hms(std.AC_times[index + 1])}}
-                                                            <!-- JSON中从1开始，所以要+1 -->
+                                                            {{ seconds_to_hms(std.AC_times[String.fromCharCode('A'.charCodeAt(0) + index)]) }}
+
                                                         </v-col>
                                                     </v-row>
                                                     <v-row no-gutters
-                                                           v-if="std.wrong_numbers[index + 1]"
+                                                           v-if="std.wrong_numbers[String.fromCharCode('A'.charCodeAt(0) + index)]"
                                                     >
                                                         <v-col class="d-flex justify-center align-center">
                                                             <span class="caption">
-                                                                ( -{{std.wrong_numbers[index + 1]}} )
+                                                                ( -{{ seconds_to_hms(std.wrong_numbers[String.fromCharCode('A'.charCodeAt(0) + index)]) }} )
                                                             </span>
                                                         </v-col>
                                                     </v-row>

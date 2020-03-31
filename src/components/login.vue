@@ -88,11 +88,11 @@
         methods: {
             login() {
                 var thisCom = this;
-                if (this.l_username === "") {
+                if (!this.l_username) {
                     alert("username is empty!");
                     return;
                 }
-                if (this.l_password === "") {
+                if (!this.l_password) {
                     alert("password is empty!");
                     return;
                 }

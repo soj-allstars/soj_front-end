@@ -85,7 +85,6 @@
         },
         computed: {
             strip_code: function() {
-                // let thisCom = this;
                 return $.trim(this.code);
             }
         },
