@@ -31,10 +31,11 @@
                                 link :to="{ name:'problem', query: { pid: pbl.id } }">{{pbl.title}}</v-btn>
                             </v-col>
                         </v-row>
-                        <v-pagination
-                          v-model="page"
-                          :length="6"
-                          class="mt-10"
+                        <v-pagination :length="Math.ceil(problem_cnt / page_length)"
+                                      v-model="selected_page"
+                                      @input="click_input"
+                                      :total-visible="10"
+                                      class="mt-10"
                         ></v-pagination>
                     </div>
                 </v-card>
@@ -46,13 +47,17 @@
 
 
 <script>
+    import router from "../router";
+
     export default {
         data: function() {
             return {
-                page: 1,
+                selected_page: 1,
                 prev: '',
                 next: '',
                 problem_cnt: 2,
+                // 一页题目应该有的数量，需要和后端进行协商
+                page_length: 20,
                 problems: [
                     {
                         id: 1,
@@ -65,13 +70,25 @@
                 ]
             }
         },
+        methods: {
+            click_input: function (num) {
+                router.push({name: 'problemSet', query: {page: num}});
+            },
+        },
         beforeMount: function() {
-            var thisCom = this;
+            let thisCom = this;
+            let page_num = 1;
+            if (thisCom.$route.query.page) {
+                page_num = thisCom.$route.query.page;
+            }
             $.ajax({
                 //请求方式
                 type : "GET",
                 //请求地址
                 url : thisCom.serveUrl() + '/api/problems/',
+                data : {
+                    page: page_num,
+                },
                 //请求成功
                 success : function(result) {
                     thisCom.problem_cnt = result.count;
@@ -83,6 +100,37 @@
                 error : function(e){
                   console.log(e.status);
                   console.log(e.responseText);
+                  alert(e.responseText);
+                }
+            });
+        },
+
+        beforeRouteUpdate(to, from, next) {
+            let thisCom = this;
+            let page_num = 1;
+            if (to.query.page) {
+                page_num = to.query.page;
+            }
+            $.ajax({
+                //请求方式
+                type : "GET",
+                //请求地址
+                url : thisCom.serveUrl() + '/api/problems/',
+                data : {
+                    page: page_num,
+                },
+                //请求成功
+                success : function(result) {
+                    thisCom.problem_cnt = result.count;
+                    thisCom.prev = result.previous;
+                    thisCom.next = result.next;
+                    thisCom.problems = result.results;
+                },
+                //请求失败，包含具体的错误信息
+                error : function(e){
+                    console.log(e.status);
+                    console.log(e.responseText);
+                    alert(e.responseText);
                 }
             });
         }

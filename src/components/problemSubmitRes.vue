@@ -71,6 +71,7 @@
                                 :length="Math.ceil(submission_count / page_length)"
                                 v-model="selected_page"
                                 @input="click_input"
+                                :total-visible="10"
                         ></v-pagination>
                     </v-row>
                 </v-card>
@@ -90,6 +91,7 @@ export default {
             previous: null,
             next: null,
             results: null,
+            // 一页的提交数，需要和后端协调，目前定为20
             page_length: 20,
             
             /* 用于控制页面本身元素 */
@@ -141,7 +143,7 @@ export default {
 
     beforeMount() {
         let thisCom = this;
-        let page_num = 0;
+        let page_num = 1;
         if (thisCom.$route.query.page) {
             page_num = thisCom.$route.query.page;
         }
@@ -150,6 +152,9 @@ export default {
             type : "GET",
             // 请求地址
             url : thisCom.serveUrl() + '/api/submissions' + '/',
+            data : {
+                page: page_num,
+            },
             // 请求成功
             success : function(result) {
                 thisCom.submission_count = result.count;
@@ -161,13 +166,45 @@ export default {
             error : function(e){
                 console.log(e.status);
                 console.log(e.responseText);
+                alert(e.responseText);
             }
         });
+
+        let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
+
+        ws.onopen = function(evt) {
+            console.log("WS connection open ...");
+            if (!thisCom.results) {
+                setTimeout(ws.onopen, 250);
+                return;
+            }
+            for (let res of thisCom.results) {
+                if (res.verdict === "PENDING") {
+                    let post_data = {
+                        type: "detail",
+                        submission_id: res.id,
+                    };
+                    ws.send(JSON.stringify(post_data));
+                    console.log('send : ' + JSON.stringify(post_data));
+                }
+            }
+        };
+
+        ws.onmessage = function(evt) {
+            console.log( "WS received Message: " + evt.data);
+            let recv_data = JSON.parse(evt.data);
+            thisCom.recv_data = recv_data;
+            console.log('recv: ' + recv_data);
+        };
+
+        ws.onclose = function(evt) {
+            console.log("WS connection closed.");
+        };
     },
 
     beforeRouteUpdate(to, from, next) {
         let thisCom = this;
-        let page_num = 0;
+        let page_num = 1;
         if (to.query.page) {
             page_num = to.query.page;
         }
@@ -190,8 +227,41 @@ export default {
             error : function(e){
                 console.log(e.status);
                 console.log(e.responseText);
+                alert(e.responseText);
             }
         });
+
+        let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
+
+        ws.onopen = function(evt) {
+            console.log("WS connection open ...");
+            if (!thisCom.results) {
+                setTimeout(ws.onopen, 250);
+                return;
+            }
+            for (let res of thisCom.results) {
+                if (res.verdict === "PENDING") {
+                    let post_data = {
+                        type: "detail",
+                        submission_id: res.id,
+                    };
+                    ws.send(JSON.stringify(post_data));
+                    console.log('send : ' + JSON.stringify(post_data));
+                }
+            }
+        };
+
+        ws.onmessage = function(evt) {
+            console.log( "WS received Message: " + evt.data);
+            let recv_data = JSON.parse(evt.data);
+            thisCom.recv_data = recv_data;
+            console.log('recv: ' + recv_data);
+        };
+
+        ws.onclose = function(evt) {
+            console.log("WS connection closed.");
+        };
+
         next();
     }
 

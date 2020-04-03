@@ -101,10 +101,11 @@
 <!--                        </v-row>-->
 <!--                    </div>-->
 
-                        <v-pagination
-                                v-model="page"
-                                :length="6"
-                                class="mt-10"
+                        <v-pagination :length="Math.ceil(contest_cnt / page_length)"
+                                      v-model="selected_page"
+                                      @input="click_input"
+                                      :total-visible="10"
+                                      class="mt-10"
                         ></v-pagination>
 
 
@@ -116,6 +117,8 @@
 </template>
 
 <script>
+    import router from "../router";
+
     export default {
         name: "contestSet",
         data: function () {
@@ -123,7 +126,7 @@
                 /* 用于控制页面元素 */
 
                 // 下面的页面栏的v-model
-                page: 1,
+                selected_page: 1,
 
                 // 每个比赛开始时间的简化（字符串）
                 start_time_simplified: [],
@@ -148,6 +151,9 @@
                     ended: "",
                 },
 
+                // 每页的比赛数，需要和后端商量好
+                page_length: 20,
+
                 nowTime: new Date(),
                 contest_cnt: 0,
                 prev: null,
@@ -157,6 +163,10 @@
         },
 
         methods: {
+            click_input: function (num) {
+                router.push({name: 'contestSet', query: {page: num}});
+            },
+
             cal_contest_status: function (st_str, et_str) {
                 let st = new Date(st_str);
                 let et = new Date(et_str);
@@ -256,18 +266,20 @@
             },
         },
 
-
-
-
-
-
         beforeMount: function() {
-            var thisCom = this;
+            let thisCom = this;
+            let page_num = 1;
+            if (thisCom.$route.query.page) {
+                page_num = thisCom.$route.query.page;
+            }
             $.ajax({
                 // 请求方式
                 type : "GET",
                 // 请求地址
                 url : thisCom.serveUrl() + '/api/contests/',
+                data : {
+                    page: page_num,
+                },
                 // 请求成功
                 success : function(result) {
                     thisCom.contest_cnt = result.count;
@@ -277,9 +289,9 @@
                     thisCom.nowTime = new Date();
 
                     // 给每条比赛项目算出所需要的属性
-                    thisCom.contests.forEach(
+                    thisCom.contests.forEach (
                         function (element) {
-                            thisCom.contests_status.push(
+                            thisCom.contests_status.push (
                                 thisCom.cal_contest_status(element.start_time, element.end_time)
                             );
                             thisCom.start_time_simplified.push(
@@ -292,20 +304,53 @@
                 error : function(e){
                     console.log(e.status);
                     console.log(e.responseText);
+                    alert(e.responseText);
                 }
             });
+        },
 
-            // 给每条比赛项目算出所需要的属性
-            // thisCom.contests.forEach(
-            //     function (element) {
-            //         thisCom.contests_status.push(
-            //             thisCom.cal_contest_status(element.start_time, element.end_time)
-            //         );
-            //         thisCom.start_time_simplified.push(
-            //             element.start_time.replace('T', '\n').replace(/\.\d+.*/, '')
-            //         )
-            //     }
-            // );
+        beforeRouteUpdate(to, from, next) {
+            let thisCom = this;
+            let page_num = 1;
+            if (to.query.page) {
+                page_num = to.query.page;
+            }
+            $.ajax({
+                // 请求方式
+                type : "GET",
+                // 请求地址
+                url : thisCom.serveUrl() + '/api/contests/',
+                data : {
+                    page: page_num,
+                },
+                // 请求成功
+                success : function(result) {
+                    thisCom.contest_cnt = result.count;
+                    thisCom.prev = result.previous;
+                    thisCom.next = result.next;
+                    thisCom.contests = result.results;
+                    thisCom.nowTime = new Date();
+
+                    // 给每条比赛项目算出所需要的属性
+                    thisCom.contests.forEach (
+                        function (element) {
+                            thisCom.contests_status.push (
+                                thisCom.cal_contest_status(element.start_time, element.end_time)
+                            );
+                            thisCom.start_time_simplified.push(
+                                element.start_time.replace('T', '\n').replace(/\+\d+.*/, '')
+                            )
+                        }
+                    );
+                },
+                // 请求失败，包含具体的错误信息
+                error : function(e){
+                    console.log(e.status);
+                    console.log(e.responseText);
+                    alert(e.responseText);
+                }
+            });
+            next();
         }
     }
 </script>

@@ -27,10 +27,13 @@
 		  <v-list dense>
 		    <v-list-item @click.stop="left = !left">
 		      <v-list-item-action>
-		        <v-icon>mdi-exit-to-app</v-icon>
+		        <v-icon>mdi-account-circle</v-icon>
 		      </v-list-item-action>
-		      <v-list-item-content>
-		        <v-list-item-title>留着以后做用户的侧边栏</v-list-item-title>
+              <v-list-item-content v-if="is_signed_in">
+                <v-list-item-title>{{username}}</v-list-item-title>
+              </v-list-item-content>
+		      <v-list-item-content v-if="!is_signed_in" @click="mylogin">
+		        <v-list-item-title>登录</v-list-item-title>
 		      </v-list-item-content>
 		    </v-list-item>
             <v-list-item @click.stop="left = !left">
@@ -38,7 +41,7 @@
                 <v-icon>mdi-exit-to-app</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>{{serveUrl()}}</v-list-item-title>
+                <v-list-item-title><a href="http://47.106.140.231/">http://47.106.140.231/</a></v-list-item-title>
               </v-list-item-content>
             </v-list-item>
 		  </v-list>
@@ -64,45 +67,41 @@
 </template>
 
 <script>
-	export default {
+	import router from "../router";
+
+    export default {
         data : function () {
             return {
-                drawer: false
+                // 用于控制页面元素
+                drawer: false,
+
+                // 页面数据
+                username: null,
+                is_signed_in: false,
             }
         },
         methods : {
             mylogin: function() {
-                var thisCom = this;
-                $.ajax({
-                    //请求方式
-                    type : "POST",
-                    //请求地址
-                    url : thisCom.serveUrl() + '/api/user/login/',
-                    //POST里面的data
-                    data: {
-                        username: "soj",
-                        password: "soj",
-                        keep: true
-                    },
-                    crossDomain: true,
-                    xhrFields: {
-                      withCredentials: true
-                    },
-                    //请求成功
-                    success : function(result) {
-                        alert(result.detail);
-                    },
-                    //请求失败，包含具体的错误信息
-                    error : function(e){
-                      console.log(e.status);
-                      console.log(e.responseText);
-                      alert('出了点问题，请重新提交。');
-                    },
-                    
-                });
+                router.push("login");
             }
+        },
+        beforeMount() {
+            let thisCom = this;
+            $.ajax({
+                type: "GET",
+                url: thisCom.serveUrl() + "/api/global-info/",
+                success: function(result) {
+                    console.log(result);
+                    thisCom.is_signed_in = result.is_signed_in;
+                    thisCom.username = result.username;
+                },
+                error: function(e) {
+                    console.log(e.status);
+                    console.log(e.responseText);
+                },
+            })
         }
-	}
+    }
 </script>
 
 <style scoped>
