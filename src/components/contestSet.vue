@@ -161,6 +161,7 @@
                         </v-card>
                     </v-dialog>
 
+
                     <v-dialog v-model="show_unregister_dialog"
                               max-width="500px"
                     >
@@ -452,7 +453,7 @@
                     // 请求成功
                     success : function(result) {
                         if (go_next_page) {
-                            router.push({ name: contest, query: { cid: thisCom.clicked_ctst.id } });
+                            router.push({ name: "contest", query: { cid: thisCom.clicked_ctst.id } });
                         } else {
                             router.go(0);
                         }
