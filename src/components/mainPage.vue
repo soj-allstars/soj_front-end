@@ -86,10 +86,28 @@
             }
         },
         beforeMount() {
+            // 用于跨域
+            let csrftoken = this.getCookie('csrftoken');
+            console.log("csrftoken:\n" + csrftoken);
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    console.log(settings.type);
+                    // && !this.crossDomain
+                    if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
             let thisCom = this;
             $.ajax({
                 type: "GET",
                 url: thisCom.serveUrl() + "/api/global-info/",
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true
+                },
                 success: function(result) {
                     console.log(result);
                     thisCom.is_signed_in = result.is_signed_in;
@@ -99,7 +117,43 @@
                     console.log(e.status);
                     console.log(e.responseText);
                 },
-            })
+            });
+        },
+        beforeRouteUpdate(to, from, next) {
+            // 用于跨域
+            var csrftoken = this.getCookie('csrftoken');
+            console.log("csrftoken:\n" + csrftoken);
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    console.log(settings.type);
+                    // && !this.crossDomain
+                    if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            let thisCom = this;
+            $.ajax({
+                type: "GET",
+                url: thisCom.serveUrl() + "/api/global-info/",
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function(result) {
+                    console.log(result);
+                    thisCom.is_signed_in = result.is_signed_in;
+                    thisCom.username = result.username;
+                },
+                error: function(e) {
+                    console.log(e.status);
+                    console.log(e.responseText);
+                },
+            });
+
+            next();
         }
     }
 </script>

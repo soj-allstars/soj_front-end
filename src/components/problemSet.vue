@@ -74,65 +74,47 @@
             click_input: function (num) {
                 router.push({name: 'problemSet', query: {page: num}});
             },
+            getProblemPage: function (page_num) {
+                let thisCom = this;
+                $.ajax({
+                    //请求方式
+                    type : "GET",
+                    //请求地址
+                    url : thisCom.serveUrl() + '/api/problems/',
+                    data : {
+                        page: page_num,
+                    },
+                    //请求成功
+                    success : function(result) {
+                        thisCom.problem_cnt = result.count;
+                        thisCom.prev = result.previous;
+                        thisCom.next = result.next;
+                        thisCom.problems = result.results;
+                    },
+                    //请求失败，包含具体的错误信息
+                    error : function(e){
+                        console.log(e.status);
+                        console.log(e.responseText);
+                        alert(e.responseText);
+                    }
+                });
+            }
         },
         beforeMount: function() {
-            let thisCom = this;
             let page_num = 1;
-            if (thisCom.$route.query.page) {
-                page_num = thisCom.$route.query.page;
+            if (this.$route.query.page) {
+                page_num = this.$route.query.page;
             }
-            $.ajax({
-                //请求方式
-                type : "GET",
-                //请求地址
-                url : thisCom.serveUrl() + '/api/problems/',
-                data : {
-                    page: page_num,
-                },
-                //请求成功
-                success : function(result) {
-                    thisCom.problem_cnt = result.count;
-                    thisCom.prev = result.previous;
-                    thisCom.next = result.next;
-                    thisCom.problems = result.results;
-                },
-                //请求失败，包含具体的错误信息
-                error : function(e){
-                  console.log(e.status);
-                  console.log(e.responseText);
-                  alert(e.responseText);
-                }
-            });
+            this.getProblemPage(page_num);
         },
 
         beforeRouteUpdate(to, from, next) {
-            let thisCom = this;
             let page_num = 1;
             if (to.query.page) {
                 page_num = to.query.page;
             }
-            $.ajax({
-                //请求方式
-                type : "GET",
-                //请求地址
-                url : thisCom.serveUrl() + '/api/problems/',
-                data : {
-                    page: page_num,
-                },
-                //请求成功
-                success : function(result) {
-                    thisCom.problem_cnt = result.count;
-                    thisCom.prev = result.previous;
-                    thisCom.next = result.next;
-                    thisCom.problems = result.results;
-                },
-                //请求失败，包含具体的错误信息
-                error : function(e){
-                    console.log(e.status);
-                    console.log(e.responseText);
-                    alert(e.responseText);
-                }
-            });
+            this.getProblemPage(page_num);
+            next();
         }
     }
 </script>

@@ -270,8 +270,8 @@
         data: function () {
             return {
                 "cid": 0,
-                "name": "The first FUCKING contest",
-                "description": "string",
+                "name": "",
+                "description": "",
                 "problems": [
                     {
                         "id": 0,
@@ -410,11 +410,29 @@
             let thisCom = this;
             console.log('beforemount: ' + this.cid);
 
+            // 用于跨域
+            let csrftoken = this.getCookie('csrftoken');
+            console.log("csrftoken:\n" + csrftoken);
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    console.log(settings.type);
+                    // && !this.crossDomain
+                    if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
             $.ajax({
                 // 请求方式
                 type : "GET",
                 // 请求地址
                 url : thisCom.serveUrl() + '/api/contest/' + this.cid + '/',
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true
+                },
                 // 请求成功
                 success : function(result) {
                     thisCom.name = result.name;
@@ -471,37 +489,7 @@
         beforeRouteUpdate (to, from, next) {
             // react to route changes...
             // don't forget to call next()
-            this.cid = to.query.cid;
-            let thisCom = this;
-            $.ajax({
-                // 请求方式
-                type : "GET",
-                // 请求地址
-                url : thisCom.serveUrl() + '/api/contest/' + this.cid + '/',
-                // 请求成功
-                success : function(result) {
-                    thisCom.cid = result.cid;
-                    thisCom.name = result.name;
-                    thisCom.description = result.description;
-                    thisCom.problems = result.problems;
-                    thisCom.start_time = result.start_time;
-                    thisCom.end_time = result.end_time;
-                    thisCom.is_running = result.is_running;
-                    thisCom.registered = result.registered;
-                    thisCom.category = result.category;
-
-                    thisCom.start_date = new Date(thisCom.start_time);
-                    thisCom.end_date = new Date(thisCom.end_time);
-
-                    thisCom.updateTime();
-                    thisCom.interval_value = setInterval(thisCom.updateTime, 1000);
-                },
-                // 请求失败，包含具体的错误信息
-                error : function(e){
-                    console.log(e.status);
-                    console.log(e.responseText);
-                }
-            });
+            // 不允许通过这个来改变那个contest
 
             next();
         }

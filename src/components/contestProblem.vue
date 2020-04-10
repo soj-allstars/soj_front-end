@@ -179,11 +179,30 @@
             this.pid = this.$route.query.pid;
             this.cid = this.$route.query.cid;
             var thisCom = this;
+
+            // 用于跨域
+            let csrftoken = this.getCookie('csrftoken');
+            console.log("csrftoken:\n" + csrftoken);
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    console.log(settings.type);
+                    // && !this.crossDomain
+                    if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
             $.ajax({
                 //请求方式
                 type : "GET",
                 //请求地址
                 url : thisCom.serveUrl() + '/api/contest/problem/' + thisCom.cid + '/' + thisCom.pid + '/',
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true
+                },
                 //请求成功
                 success : function(result) {
                     thisCom.title = result.title;

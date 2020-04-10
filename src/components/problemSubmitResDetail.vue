@@ -1,69 +1,60 @@
 <template>
-    <v-container
-            fluid
-            no-gutters
-    >
-        <v-row align="center" justify="center">
-            <v-col cols="10">
-                <v-card class="pa-10" color="#dddddd">
-                    <v-row align="center" justify="center">
-                        <v-col cols="10">
-                            <v-card class="pa-7">
-                                <v-row justify="center">
-                                    <v-col cols="10" class="d-flex justify-center">
-                                        <v-row class="py-7">
-                                            <v-col cols="6">
-                                                <v-row justify="center">
-                                                    <v-col class="pt-0">
-                                                        <v-img :src="require('../assets/ACMYES/' + verdict + '.png')" height="200" :contain="true"></v-img>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-col>
-                                            <v-col>
-                                                <div>
-                                                    <v-row>
-                                                        <v-col>
-                                                            <v-icon class="mr-2">mdi-calendar</v-icon>
-                                                            <span class="text--secondary">{{submit_time}}</span>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row>
-                                                        <v-col>
-                                                            <v-icon class="mr-2">mdi-timer</v-icon>
-                                                            <span class="text--secondary">{{time_usage}} ms</span>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row>
-                                                        <v-col>
-                                                            <v-icon class="mr-2">mdi-database</v-icon>
-                                                            <span class="text--secondary">{{memory_usage}} KB</span>
-                                                        </v-col>
-                                                    </v-row>
-                                                    <v-row>
-                                                        <v-col>
-                                                            <v-icon class="mr-2">mdi-flag</v-icon>
-                                                            <span class="text--secondary">{{lang}}</span>
-                                                        </v-col>
-                                                    </v-row>
-                                                </div>
+        <v-card class="pa-10" color="#dddddd">
+            <v-row align="center" justify="center">
+                <v-col cols="11">
+                    <v-card class="pa-7">
+                        <v-row justify="center">
+                            <v-col cols="10" class="d-flex justify-center">
+                                <v-row class="py-7">
+                                    <v-col cols="6">
+                                        <v-row justify="center">
+                                            <v-col class="pt-0">
+                                                <v-img :src="require('../assets/ACMYES/' + verdict + '.png')" height="200" :contain="true"></v-img>
                                             </v-col>
                                         </v-row>
                                     </v-col>
-                                </v-row>
-                                <v-row justify="center" v-show="code">
-                                    <v-col cols="10">
-                                        <div class="d-flex justify-center">
-                                            <pre><code class="pa-12" v-html="code"></code></pre>
+                                    <v-col>
+                                        <div>
+                                            <v-row>
+                                                <v-col>
+                                                    <v-icon class="mr-2">mdi-calendar</v-icon>
+                                                    <span class="text--secondary">{{submit_time}}</span>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col>
+                                                    <v-icon class="mr-2">mdi-timer</v-icon>
+                                                    <span class="text--secondary">{{time_usage}} ms</span>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col>
+                                                    <v-icon class="mr-2">mdi-database</v-icon>
+                                                    <span class="text--secondary">{{memory_usage}} KB</span>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col>
+                                                    <v-icon class="mr-2">mdi-flag</v-icon>
+                                                    <span class="text--secondary">{{lang}}</span>
+                                                </v-col>
+                                            </v-row>
                                         </div>
                                     </v-col>
                                 </v-row>
-                            </v-card>
-                        </v-col>
-                    </v-row>
-                </v-card>
-            </v-col>
-        </v-row>
-    </v-container>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" v-show="code">
+                            <v-col cols="10">
+                                <div class="d-flex justify-center">
+                                    <pre><code class="pa-12" v-html="code"></code></pre>
+                                </div>
+                            </v-col>
+                        </v-row>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-card>
 </template>
 
 <script>
@@ -71,6 +62,7 @@
 
     export default {
         name: "problemSubmitResDetail",
+        props: ["submission_id"],
         data: function () {
             return {
                 verdict: 'PENDING',
@@ -80,7 +72,6 @@
                 code: '',
                 lang: '',
                 outputs: null,
-
             }
         },
         computed: {
@@ -91,7 +82,7 @@
 
         methods: {
             getSubmission: function(submission_id) {
-                var thisCom = this;
+                let thisCom = this;
                 $.ajax({
                     //请求方式
                     type : "GET",
@@ -132,6 +123,8 @@
                         console.log('lang:\n' + thisCom.lang);
                         console.log('outputs:\n' + thisCom.outputs);
 
+                        console.log('all:\n' + JSON.stringify(result));
+
                         // thisCom.items[0].status = thisCom.verdict;
                         // thisCom.items[0].memory_cost = thisCom.memory_usage;
                         // thisCom.items[0].time_cost = thisCom.time_usage;
@@ -146,9 +139,23 @@
                 });
             }
         },
+
+        watch: {
+            submission_id: function () {
+                if (this.submission_id) {
+                    this.getSubmission(this.submission_id);
+                }
+            }
+        },
+
         created: function() {
             let thisCom = this;
-            this.getSubmission(this.$route.query.submission_id);
+            if (this.submission_id) {
+                this.getSubmission(this.submission_id);
+            }
+            else {
+                this.getSubmission(this.$route.query.submission_id);
+            }
         },
         mounted() {
             hljs.initHighlightingOnLoad();

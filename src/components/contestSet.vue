@@ -21,15 +21,16 @@
                                     <v-row>
                                         <v-col class="pt-0 pb-1">
                                             <v-btn text block tile
-                                                   link :to="{ name:'contest', query: { cid: ctst.id } }"
                                                    class="headline font-weight-medium d-flex justify-start px-0"
                                                    :class="text_class[contests_status[index]]"
+                                                   @click="enterContest(ctst)"
                                             >
                                                 {{ctst.name}}
                                             </v-btn>
                                         </v-col>
                                     </v-row>
                                     <div class="d-flex justify-start">
+
                                         <v-tooltip bottom color="#333">
                                             <template v-slot:activator="{ on }">
                                                 <span class="caption"
@@ -50,63 +51,144 @@
                                             >mdi-clock</v-icon>
                                             <span class="pl-1">{{cal_hour_length(ctst.start_time, ctst.end_time)}}</span>
                                         </span>
+                                        <v-tooltip bottom color="#333">
+                                            <template v-slot:activator="{ on }">
+                                                <span class="caption ml-8"
+                                                      :class="text_class[contests_status[index]]"
+                                                      v-on="on"
+                                                >
+                                                    <v-icon small :color="icon_class[contests_status[index]]"
+                                                    >{{access_icon[ctst.category]}}</v-icon>
+                                                </span>
+                                            </template>
+                                            <span>{{ctst.category}}</span>
+                                        </v-tooltip>
+
+                                        <v-spacer></v-spacer>
+
+                                        <v-tooltip bottom color="#333">
+                                            <template v-slot:activator="{ on }">
+                                                <v-btn text x-small class="pa-0"
+                                                       v-if="ctst.category === 'REGISTER' && ctst.registered"
+                                                       v-on="on"
+                                                       @click="unregister_contest(ctst)"
+                                                >
+                                                    <v-icon small
+                                                            :color="icon_class[contests_status[index]]">
+                                                        mdi-exit-to-app
+                                                    </v-icon>
+                                                </v-btn>
+                                            </template>
+                                            <span>unregister the contest</span>
+                                        </v-tooltip>
+
                                     </div>
                                 </v-card>
                             </v-col>
                         </v-row>
                     </div>
 
+                    <v-pagination :length="Math.ceil(contest_cnt / page_length)"
+                                  v-model="selected_page"
+                                  @input="click_input"
+                                  :total-visible="10"
+                                  class="mt-10"
+                    ></v-pagination>
 
-<!--                    <div class="text-center">-->
-<!--                        <v-row class="row_height">-->
-<!--                            <v-col cols='2' class="font-weight-black pa-0 ma-0 row_height">-->
-<!--                                Begin Time-->
-<!--                            </v-col>-->
-<!--                            <v-col class="font-weight-black pa-0 ma-0">-->
-<!--                                Name-->
-<!--                            </v-col>-->
-<!--                            <v-col cols='2' class="font-weight-black pa-0 ma-0 row_height">-->
-<!--                                Length-->
-<!--                            </v-col>-->
 
-<!--                        </v-row>-->
-<!--                        <v-row v-for="(ctst, index) in contests" :key="ctst.id"-->
-<!--                               class="row_height"-->
-<!--                               align="center"-->
-<!--                               justify="center">-->
-<!--                            <v-col cols='2' class="pa-0 ma-0 row_height rela_pos ">-->
-<!--                                <v-tooltip top>-->
-<!--                                    <template v-slot:activator="{ on }">-->
-<!--                                        <v-card outlined tile class="row_height align-center justify-center d-flex text&#45;&#45;secondary"-->
-<!--                                                :class="text_class[contests_status[index]]"-->
-<!--                                                v-on="on"-->
-<!--                                        >-->
-<!--                                            {{start_time_simplified[index]}}-->
-<!--                                        </v-card>-->
-<!--                                    </template>-->
-<!--                                    <span>{{contests_status[index]}}</span>-->
-<!--                                </v-tooltip>-->
 
-<!--                            </v-col>-->
-<!--                            <v-col class="pa-0 ma-0 row_height">-->
-<!--                                <v-btn text block outlined tile height="50px" class="text-none"-->
-<!--                                       link :to="{ name:'contest', params: { cid: ctst.id } }">{{ctst.name}}</v-btn>-->
-<!--                            </v-col>-->
-<!--                            <v-col cols='2' class="pa-0 ma-0 row_height">-->
-<!--                                <v-card outlined tile class="row_height align-center justify-center d-flex text&#45;&#45;secondary">-->
-<!--                                    {{cal_time_length(ctst.start_time, ctst.end_time)}}-->
-<!--                                </v-card>-->
-<!--                            </v-col>-->
+                    <v-dialog v-model="show_check_enter_dialog"
+                              max-width="500px"
+                    >
+                        <v-card v-if="clicked_ctst.category === 'PRIVATE' ">
+                            <v-card-title class="headline">VERIFY</v-card-title>
+                            <v-card-text>
+                                <v-text-field
+                                        v-model="ctst_psw"
+                                        :append-icon="show_psw ? 'mdi-eye' : 'mdi-eye-off'"
+                                        :type="show_psw ? 'text' : 'password'"
+                                        label="Password"
+                                        @click:append="show_psw = !show_psw"
+                                ></v-text-field>
+                            </v-card-text>
 
-<!--                        </v-row>-->
-<!--                    </div>-->
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                        color="blue darken-2"
+                                        text
+                                        @click="show_check_enter_dialog = false"
+                                >
+                                    CANCEL
+                                </v-btn>
 
-                        <v-pagination :length="Math.ceil(contest_cnt / page_length)"
-                                      v-model="selected_page"
-                                      @input="click_input"
-                                      :total-visible="10"
-                                      class="mt-10"
-                        ></v-pagination>
+                                <v-btn
+                                        color="blue darken-2"
+                                        text
+                                        @click="goVerify('/api/contest/let-me-in/',
+                                                {password: ctst_psw}
+                                                )"
+                                >
+                                    ENTER
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+
+
+                        <v-card v-if="clicked_ctst.category === 'REGISTER' ">
+                            <v-card-title class="headline">REGISTER</v-card-title>
+                            <v-card-text>Do you want to register this contest?</v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                        color="blue darken-2"
+                                        text
+                                        @click="show_check_enter_dialog = false"
+                                >
+                                    CANCEL
+                                </v-btn>
+
+                                <v-btn
+                                        color="blue darken-2"
+                                        text
+                                        @click="goVerify('/api/contest/register/',
+                                                { contest_id: clicked_ctst.id }
+                                                )"
+                                >
+                                    REGISTER
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+
+                    <v-dialog v-model="show_unregister_dialog"
+                              max-width="500px"
+                    >
+                        <v-card>
+                            <v-card-title class="headline">UNREGISTER</v-card-title>
+                            <v-card-text>Do you want to unregister this contest?</v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                        color="blue darken-2"
+                                        text
+                                        @click="show_unregister_dialog = false"
+                                >
+                                    CANCEL
+                                </v-btn>
+
+                                <v-btn
+                                        color="blue darken-2"
+                                        text
+                                        @click="goVerify('/api/contest/unregister/',
+                                            { contest_id: clicked_ctst.id },
+                                            false)"
+                                >
+                                    UNREGISTER
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
 
 
                 </v-card>
@@ -128,6 +210,13 @@
                 // 下面的页面栏的v-model
                 selected_page: 1,
 
+                // 验证的对话框得到v-model
+                show_check_enter_dialog: false,
+                show_unregister_dialog: false,
+                show_psw: false,
+                ctst_psw: '',
+                clicked_ctst: {},
+
                 // 每个比赛开始时间的简化（字符串）
                 start_time_simplified: [],
 
@@ -136,9 +225,16 @@
 
                 // 每个状态的字体颜色
                 icon_class: {
-                    running: "white",
-                    scheduled: "blue darken-4",
-                    ended: "grey darken-1",
+                    "running": "white",
+                    "scheduled": "blue darken-4",
+                    "ended": "grey darken-1"
+                },
+                // 比赛权限的icon
+                access_icon: {
+                    "OPEN": "mdi-door-open",
+                    "PRIVATE": "mdi-lock",
+                    "REGISTER": "mdi-account-plus",
+                    "SOLO": "mid-account-multiple",
                 },
                 text_class: {
                     running: "white--text",
@@ -154,6 +250,8 @@
                 // 每页的比赛数，需要和后端商量好
                 page_length: 20,
 
+
+                /* 数据 */
                 nowTime: new Date(),
                 contest_cnt: 0,
                 prev: null,
@@ -264,92 +362,152 @@
                 hours = hours.toFixed(1);
                 return hours + " hours";
             },
+
+            getContestPage: function(page_num) {
+                let thisCom = this;
+
+                // 用于跨域
+                let csrftoken = this.getCookie('csrftoken');
+                console.log("csrftoken:\n" + csrftoken);
+
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        console.log(settings.type);
+                        // && !this.crossDomain
+                        if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    // 请求方式
+                    type : "GET",
+                    // 请求地址
+                    url : thisCom.serveUrl() + '/api/contests/',
+                    data : {
+                        page: page_num,
+                    },
+                    crossDomain: true,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    // 请求成功
+                    success : function(result) {
+                        thisCom.contest_cnt = result.count;
+                        thisCom.prev = result.previous;
+                        thisCom.next = result.next;
+                        thisCom.contests = result.results;
+                        console.log(JSON.stringify(result.results));
+                        thisCom.nowTime = new Date();
+
+                        // 给每条比赛项目算出所需要的属性
+                        thisCom.contests.forEach (
+                            function (element) {
+                                thisCom.contests_status.push (
+                                    thisCom.cal_contest_status(element.start_time, element.end_time)
+                                );
+                                thisCom.start_time_simplified.push(
+                                    element.start_time.replace('T', '\n').replace(/\+\d+.*/, '')
+                                )
+                            }
+                        );
+                    },
+                    // 请求失败，包含具体的错误信息
+                    error : function(e){
+                        console.log(e.status);
+                        console.log(e.responseText);
+                        alert(e.responseText);
+                    }
+                });
+            },
+
+            goVerify: function (target_url, post_data, go_next_page = true){
+                let thisCom = this;
+
+                // 用于跨域
+                let csrftoken = this.getCookie('csrftoken');
+                console.log("csrftoken:\n" + csrftoken);
+
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        console.log(settings.type);
+                        // && !this.crossDomain
+                        if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $.ajax({
+                    // 请求方式
+                    type : "POST",
+                    // 请求地址
+                    url : thisCom.serveUrl() + target_url+ thisCom.clicked_ctst.id + '/',
+                    data : post_data,
+                    crossDomain: true,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    // 请求成功
+                    success : function(result) {
+                        if (go_next_page) {
+                            router.push({ name: contest, query: { cid: thisCom.clicked_ctst.id } });
+                        } else {
+                            router.go(0);
+                        }
+                    },
+                    // 请求失败，包含具体的错误信息
+                    error : function(e){
+                        console.log(e.status);
+                        console.log(e.responseText);
+                        alert(e.responseText);
+                    }
+                });
+            },
+
+            unregister_contest: function (ctst) {
+                this.clicked_ctst = ctst;
+                this.show_unregister_dialog = true;
+            },
+
+            enterContest: function (ctst) {
+                switch (ctst.category) {
+                    case "OPEN":
+                        router.push({ name:'contest', query: { cid: ctst.id } });
+                        break;
+                    case "REGISTER":
+                    case "PRIVATE":
+                        if (ctst.registered) {
+                            router.push({ name:'contest', query: { cid: ctst.id } });
+                        }
+                        else {
+                            this.show_check_enter_dialog = true;
+                            this.clicked_ctst = ctst;
+                        }
+                        this.show_check_enter_dialog = true;
+                        this.clicked_ctst = ctst;
+                        break;
+                    case "SOLO":
+                        break;
+                }
+            },
         },
 
         beforeMount: function() {
-            let thisCom = this;
             let page_num = 1;
-            if (thisCom.$route.query.page) {
-                page_num = thisCom.$route.query.page;
+            if (this.$route.query.page) {
+                page_num = this.$route.query.page;
             }
-            $.ajax({
-                // 请求方式
-                type : "GET",
-                // 请求地址
-                url : thisCom.serveUrl() + '/api/contests/',
-                data : {
-                    page: page_num,
-                },
-                // 请求成功
-                success : function(result) {
-                    thisCom.contest_cnt = result.count;
-                    thisCom.prev = result.previous;
-                    thisCom.next = result.next;
-                    thisCom.contests = result.results;
-                    thisCom.nowTime = new Date();
-
-                    // 给每条比赛项目算出所需要的属性
-                    thisCom.contests.forEach (
-                        function (element) {
-                            thisCom.contests_status.push (
-                                thisCom.cal_contest_status(element.start_time, element.end_time)
-                            );
-                            thisCom.start_time_simplified.push(
-                                element.start_time.replace('T', '\n').replace(/\+\d+.*/, '')
-                            )
-                        }
-                    );
-                },
-                // 请求失败，包含具体的错误信息
-                error : function(e){
-                    console.log(e.status);
-                    console.log(e.responseText);
-                    alert(e.responseText);
-                }
-            });
+            this.getContestPage(page_num);
         },
 
         beforeRouteUpdate(to, from, next) {
-            let thisCom = this;
             let page_num = 1;
             if (to.query.page) {
                 page_num = to.query.page;
             }
-            $.ajax({
-                // 请求方式
-                type : "GET",
-                // 请求地址
-                url : thisCom.serveUrl() + '/api/contests/',
-                data : {
-                    page: page_num,
-                },
-                // 请求成功
-                success : function(result) {
-                    thisCom.contest_cnt = result.count;
-                    thisCom.prev = result.previous;
-                    thisCom.next = result.next;
-                    thisCom.contests = result.results;
-                    thisCom.nowTime = new Date();
-
-                    // 给每条比赛项目算出所需要的属性
-                    thisCom.contests.forEach (
-                        function (element) {
-                            thisCom.contests_status.push (
-                                thisCom.cal_contest_status(element.start_time, element.end_time)
-                            );
-                            thisCom.start_time_simplified.push(
-                                element.start_time.replace('T', '\n').replace(/\+\d+.*/, '')
-                            )
-                        }
-                    );
-                },
-                // 请求失败，包含具体的错误信息
-                error : function(e){
-                    console.log(e.status);
-                    console.log(e.responseText);
-                    alert(e.responseText);
-                }
-            });
+            this.getContestPage(page_num);
             next();
         }
     }

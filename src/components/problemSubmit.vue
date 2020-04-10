@@ -118,7 +118,6 @@
         },
         methods: {
             submit_code: function() {
-                
                 let submission_id = -1;
                 let thisCom = this;
                 let code = '';
@@ -182,8 +181,8 @@
                         console.log(submission_id);
                         console.log(this.data.pid);
                         thisCom.$router.push({
-                            name: 'problemSubmitResDetail',
-                            query: {
+                            name: 'problemSubmitRes',
+                            params: {
                                 submission_id: submission_id
                             }
                         })
@@ -198,7 +197,7 @@
                 });
             },
             code_file_uploaded: function (e) {
-                var thisCom = this;
+                let thisCom = this;
                 
                 // 今日惨痛教训：读文件要用JS的File API以及FileReader
                 if (window.File && window.FileReader && window.FileList && window.Blob) {
