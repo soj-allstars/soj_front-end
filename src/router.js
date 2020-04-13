@@ -2,10 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import mainPage from '@/components/mainPage'
-import demoPage from '@/components/demoPage'
-import complex from '@/components/complex'
-import youtube from '@/components/youtube'
-import shit from '@/components/shit'
 import problem from '@/components/problem'
 import problemSubmit from '@/components/problemSubmit'
 import problemSubmitRes from '@/components/problemSubmitRes'
@@ -90,28 +86,6 @@ const routes = {
                 },
             ]
         },
-        {
-            path: '/demoPage',
-            name: 'demoPage',
-            component: demoPage,
-        },
-        {
-            path: '/youtube',
-            name: 'youtube',
-            component: youtube,
-        },
-        {
-            path: '/complex',
-            name: 'complex',
-            component: complex,
-            children: [
-                {
-                    path: "/shit",
-                    name: 'shit',
-                    component: shit,
-                }
-            ]
-        }
     ]
 };
 const router = new Router(routes);

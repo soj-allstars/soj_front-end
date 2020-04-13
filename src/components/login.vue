@@ -96,20 +96,7 @@
                     alert("password is empty!");
                     return;
                 }
-                
-                // 用于跨域
-                var csrftoken = this.getCookie('csrftoken');
-                console.log("csrftoken:\n" + csrftoken);
-                
-                $.ajaxSetup({
-                    beforeSend: function(xhr, settings) {
-                        console.log(settings.type);
-                        // && !this.crossDomain
-                        if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
-                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                        }
-                    }
-                });
+
                 
                 $.ajax({
                     //请求方式

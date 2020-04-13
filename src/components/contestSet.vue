@@ -125,7 +125,7 @@
                                 <v-btn
                                         color="blue darken-2"
                                         text
-                                        @click="goVerify('/api/contest/let-me-in/',
+                                        @click="goVerify('verify_psw',
                                                 {password: ctst_psw}
                                                 )"
                                 >
@@ -151,7 +151,7 @@
                                 <v-btn
                                         color="blue darken-2"
                                         text
-                                        @click="goVerify('/api/contest/register/',
+                                        @click="goVerify('register',
                                                 { contest_id: clicked_ctst.id }
                                                 )"
                                 >
@@ -181,7 +181,7 @@
                                 <v-btn
                                         color="blue darken-2"
                                         text
-                                        @click="goVerify('/api/contest/unregister/',
+                                        @click="goVerify('unregister',
                                             { contest_id: clicked_ctst.id },
                                             false)"
                                 >
@@ -280,23 +280,6 @@
                 }
             },
 
-            // cal_now_time_length: function (
-            //     now /* Date */,
-            //     st_str /* string */) {
-            //     let st = new Date(st_str);
-            //     let end_text = "";
-            //     if (now >= st) {
-            //         end_text = " Ago";
-            //         let tmp = now;
-            //         now = st;
-            //         st = tmp;
-            //     } else {
-            //         end_text = " Later";
-            //     }
-            //
-            //     return this.cal_time_length(now, st) + end_text;
-            // },
-
             cal_time_length: function (st_str, et_str) {
                 let st = new Date(st_str);
                 let et = new Date(et_str);
@@ -367,20 +350,6 @@
             getContestPage: function(page_num) {
                 let thisCom = this;
 
-                // 用于跨域
-                let csrftoken = this.getCookie('csrftoken');
-                console.log("csrftoken:\n" + csrftoken);
-
-                $.ajaxSetup({
-                    beforeSend: function(xhr, settings) {
-                        console.log(settings.type);
-                        // && !this.crossDomain
-                        if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
-                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                        }
-                    }
-                });
-
                 $.ajax({
                     // 请求方式
                     type : "GET",
@@ -388,10 +357,6 @@
                     url : thisCom.serveUrl() + '/api/contests/',
                     data : {
                         page: page_num,
-                    },
-                    crossDomain: true,
-                    xhrFields: {
-                        withCredentials: true
                     },
                     // 请求成功
                     success : function(result) {
@@ -423,28 +388,20 @@
                 });
             },
 
-            goVerify: function (target_url, post_data, go_next_page = true){
+            goVerify: function (type, post_data){
                 let thisCom = this;
 
-                // 用于跨域
-                let csrftoken = this.getCookie('csrftoken');
-                console.log("csrftoken:\n" + csrftoken);
-
-                $.ajaxSetup({
-                    beforeSend: function(xhr, settings) {
-                        console.log(settings.type);
-                        // && !this.crossDomain
-                        if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
-                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                        }
-                    }
-                });
+                let target_url = {
+                    verify_psw: '/api/contest/let-me-in/',
+                    register: '/api/contest/register/',
+                    unregister: '/api/contest/unregister/',
+                };
 
                 $.ajax({
                     // 请求方式
                     type : "POST",
                     // 请求地址
-                    url : thisCom.serveUrl() + target_url+ thisCom.clicked_ctst.id + '/',
+                    url : thisCom.serveUrl() + target_url[type] + thisCom.clicked_ctst.id + '/',
                     data : post_data,
                     crossDomain: true,
                     xhrFields: {
@@ -452,10 +409,23 @@
                     },
                     // 请求成功
                     success : function(result) {
-                        if (go_next_page) {
-                            router.push({ name: "contest", query: { cid: thisCom.clicked_ctst.id } });
-                        } else {
-                            router.go(0);
+                        switch (type) {
+                            case 'verify_psw':
+                                if (result.hasOwnProperty("ok")) {
+                                    if (!result.ok) {
+                                        alert("wrong password!")
+                                    }
+                                    else {
+                                        router.push({ name: "contest", query: { cid: thisCom.clicked_ctst.id } });
+                                    }
+                                }
+                                break;
+                            case 'register':
+                                router.push({ name: "contest", query: { cid: thisCom.clicked_ctst.id } });
+                                break;
+                            case 'unregister':
+                                router.go(0);
+                                break;
                         }
                     },
                     // 请求失败，包含具体的错误信息
@@ -486,8 +456,6 @@
                             this.show_check_enter_dialog = true;
                             this.clicked_ctst = ctst;
                         }
-                        this.show_check_enter_dialog = true;
-                        this.clicked_ctst = ctst;
                         break;
                     case "SOLO":
                         break;

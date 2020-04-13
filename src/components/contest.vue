@@ -410,20 +410,6 @@
             let thisCom = this;
             console.log('beforemount: ' + this.cid);
 
-            // 用于跨域
-            let csrftoken = this.getCookie('csrftoken');
-            console.log("csrftoken:\n" + csrftoken);
-
-            $.ajaxSetup({
-                beforeSend: function(xhr, settings) {
-                    console.log(settings.type);
-                    // && !this.crossDomain
-                    if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    }
-                }
-            });
-
             $.ajax({
                 // 请求方式
                 type : "GET",

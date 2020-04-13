@@ -97,7 +97,11 @@
                     if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
                         xhr.setRequestHeader("X-CSRFToken", csrftoken);
                     }
-                }
+                },
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true
+                },
             });
 
             let thisCom = this;
@@ -105,9 +109,7 @@
                 type: "GET",
                 url: thisCom.serveUrl() + "/api/global-info/",
                 crossDomain: true,
-                xhrFields: {
-                    withCredentials: true
-                },
+
                 success: function(result) {
                     console.log(result);
                     thisCom.is_signed_in = result.is_signed_in;
