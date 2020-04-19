@@ -98,6 +98,7 @@
 <script>
 import router from "../router";
 import problemSubmitResDetail from './problemSubmitResDetail';
+import { verdict_font_color, verdict_long_name, language_long_name} from "../lib/lang_common";
 export default {
     components: {
         problemSubmitResDetail,
@@ -122,41 +123,11 @@ export default {
 
 
             // verdict text mapping
-            verdict_detail: {
-                "AC": "Accepted",
-                "WA": "Wrong Answer",
-                "CE": "Compile Error",
-                "RE": "Runtime Error",
-                "SE": "System Error",
-                "MLE": "Memory Limit Exceeded",
-                "TLE": "Time Limit Exceeded",
-                "OLE": "Output Limit Exceeded",
-                "PE": "Presentation Error",
-                "PENDING": "Pending",
-            },
+            verdict_detail: verdict_long_name,
             // verdict color mapping
-            verdict_color: {
-                "AC": "green--text text--darken-1",
-                "WA": "red--text text--darken-3",
-                "CE": "deep-orange--text text--darken-1",
-                "RE": "deep-orange--text text--darken-1",
-                "SE": "deep-orange--text text--darken-1",
-                "MLE": "amber--text text--darken-3",
-                "TLE": "amber--text text--darken-3",
-                "OLE": "amber--text text--darken-3",
-                "PE": "light-blue--text text--darken-4",
-                "PENDING": "blue-grey--text text--lighten-1",
-            },
+            verdict_color: verdict_font_color,
             // language mapping
-            language_detail: {
-                "GXX": "g++",
-                "GCC": "gcc",
-                "JAVA": "java",
-                "CPY": "python(cpy)",
-                "PYPY": "python(pypy)",
-                "GO": "go",
-                "JS": "javascript",
-            }
+            language_detail: language_long_name,
         }
     },
     methods: {

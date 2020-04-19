@@ -3,6 +3,8 @@
      fluid
      no-gutters
     >
+<!--        这个CSS会用到public里面的fonts文件夹-->
+        <link rel="stylesheet" href="/katex.min.css">
         <v-row
          align='start'
          justify='end'
@@ -17,7 +19,6 @@
                  tile
                 >
                     <v-row>
-                        
                         <v-col><v-btn link :to="{ path: '/problemSubmit', query: { pid: pid }}"
                          block color="light-blue darken-3" class="button_font white_font">
                             <v-icon class="button_icon">mdi-cloud-upload</v-icon>
@@ -66,11 +67,12 @@
                             </v-col>
                         </v-row>
                     </v-card-subtitle>
-                    <v-divider />
-                    <v-card-text class='body-1 pt-8'>
-                        <p v-for="p in description.split('\n')" :key="p.id">
-                            {{p}}
-                        </p>
+                    <v-card-text class='body-1 grey--text text--darken-4 pt-8'>
+<!--                        <p v-for="p in description.split('\n')" :key="p.id">-->
+<!--                            {{p}}-->
+<!--                        </p>-->
+                        <div v-html="rendered_desc">
+                        </div>
                     </v-card-text>
                     <!-- inputs and outputs -->
                     <v-card-text>
@@ -85,7 +87,8 @@
                                 <v-row>
                                     <v-col class="py-0 d-flex justify-space-between">
                                         <div class='caption'>Input</div>
-                                        <v-btn x-small tile outlined
+                                        <v-btn x-small tile text
+                                               class="copy_btn"
                                                @click.stop="copy_sample(sample_inputs[i - 1])">
                                             <v-icon small>mdi-content-copy</v-icon>
                                         </v-btn>
@@ -96,7 +99,8 @@
                                 <v-row>
                                     <v-col class="py-0 d-flex justify-space-between">
                                         <div class='caption'>Output</div>
-                                        <v-btn x-small tile outlined
+                                        <v-btn x-small tile text
+                                               class="copy_btn"
                                                @click.stop="copy_sample(sample_outputs[i - 1])">
                                             <v-icon small>mdi-content-copy</v-icon>
                                         </v-btn>
@@ -120,13 +124,14 @@
         >
             copied
         </v-snackbar>
-        
     </v-container>
 </template>
 
 <script>
-    export default {
+    import sdk from 'showdown-katex';
+    import sd from 'showdown';
 
+    export default {
         data : function () {
             return {
               // 用于控制页面元素
@@ -142,9 +147,52 @@
               note: ''
             }
         },
+        computed: {
+            rendered_desc: function () {
+                let converter = new sd.Converter({
+                        extensions: [
+                            sdk({
+                                // maybe you want katex to throwOnError
+                                throwOnError: true,
+                                // disable displayMode
+                                displayMode: false,
+                                // change errorColor to blue
+                                errorColor: '#1500ff',
+                            }),
+                        ],
+                    }
+                );
+                console.log("rendered");
+                return converter.makeHtml(this.description);
+            }
+        },
         methods: {
-            copy_sample: function (text_for_copy) {
+            get_problem: function () {
+                let thisCom = this;
+                $.ajax({
+                    //请求方式
+                    type : "GET",
+                    //请求地址
+                    url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid + '/',
+                    //请求成功
+                    success : function(result) {
+                        thisCom.title = result.title;
+                        thisCom.time_limit = result.time_limit;
+                        thisCom.memory_limit = result.memory_limit;
+                        thisCom.description = result.description;
+                        thisCom.sample_inputs = result.sample_inputs;
+                        thisCom.sample_outputs = result.sample_outputs;
+                        thisCom.note = result.note;
+                    },
+                    //请求失败，包含具体的错误信息
+                    error : function(e){
+                        console.log(e.status);
+                        console.log(e.responseText);
+                    }
+                });
+            },
 
+            copy_sample: function (text_for_copy) {
                 // 原生方法
                 let con = document.getElementById('for_copy');
                 con.value = text_for_copy;
@@ -170,32 +218,11 @@
                 // selection.addRange(range);                                // 将要复制的区域的range对象添加到selection对象中
                 //
                 // document.execCommand('copy'); // 执行copy命令，copy用户选择的文本
-            }
+            },
         },
         beforeMount : function() {
             this.pid = this.$route.query.pid;
-            var thisCom = this;
-            $.ajax({
-                //请求方式
-                type : "GET",
-                //请求地址
-                url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid + '/',
-                //请求成功
-                success : function(result) {
-                    thisCom.title = result.title;
-                    thisCom.time_limit = result.time_limit;
-                    thisCom.memory_limit = result.memory_limit;
-                    thisCom.description = result.description;
-                    thisCom.sample_inputs = result.sample_inputs;
-                    thisCom.sample_outputs = result.sample_outputs;
-                    thisCom.note = result.note;
-                },
-                //请求失败，包含具体的错误信息
-                error : function(e){
-                  console.log(e.status);
-                  console.log(e.responseText);
-                }
-            });
+            this.get_problem();
         },
       
         // 只改变参数是不会使页面刷新的
@@ -204,28 +231,7 @@
         // react to route changes...
         // don't forget to call next()
             this.pid = to.query.pid;
-            var thisCom = this;
-            $.ajax({
-                //请求方式
-                type : "GET",
-                //请求地址
-                url : thisCom.serveUrl() + '/api/problem/' + thisCom.pid + '/',
-                //请求成功
-                success : function(result) {
-                  thisCom.title = result.title;
-                  thisCom.time_limit = result.time_limit;
-                  thisCom.memory_limit = result.memory_limit;
-                  thisCom.description = result.description;
-                  thisCom.sample_inputs = result.sample_inputs;
-                  thisCom.sample_outputs = result.sample_outputs;
-                  thisCom.note = result.note;
-                },
-                //请求失败，包含具体的错误信息
-                error : function(e){
-                console.log(e.status);
-                console.log(e.responseText);
-                }
-            });
+            this.get_problem();
             next();
         }
     }
@@ -247,5 +253,12 @@
     .button_icon {
         position: absolute;
         left: 5px;
+    }
+
+    .copy_btn {
+        opacity: 0.1;
+    }
+    .copy_btn:hover {
+        opacity: 1;
     }
 </style>

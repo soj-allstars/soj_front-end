@@ -55,19 +55,10 @@
                 selected_page: 1,
                 prev: '',
                 next: '',
-                problem_cnt: 2,
+                problem_cnt: 0,
                 // 一页题目应该有的数量，需要和后端进行协商
                 page_length: 20,
-                problems: [
-                    {
-                        id: 1,
-                        title: 'first problem',
-                    },
-                    {
-                        id: 2,
-                        title: 'second problem'
-                    }
-                ]
+                problems: []
             }
         },
         methods: {
@@ -122,11 +113,5 @@
 <style scoped>
     .row_height {
         height: 50px;
-    }
-    .rela_pos {
-        position: relative;
-    }
-    .border {
-        border: 1px solid #aaa;
     }
 </style>

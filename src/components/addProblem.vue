@@ -312,6 +312,8 @@
 </template>
 
 <script>
+    import { lang_backend_mapping } from "../lib/lang_common";
+
     export default {
         data: function() {
             return {
@@ -437,32 +439,7 @@
                 upload_solution: true,
                 
                 // solution_lang选择框相关
-                languages : [
-                    {
-                        lang: "g++",
-                        lang_id: "GXX"
-                    },
-                    {
-                        lang: "gcc",
-                        lang_id: "GCC"
-                    },
-                    {
-                        lang: "java",
-                        lang_id: "Java"
-                    },
-                    {
-                        lang: "python(cpython)",
-                        lang_id: "CPY"
-                    },
-                    {
-                        lang: "go",
-                        lang_id: "Go"
-                    },
-                    {
-                        lang: "Javascript",
-                        lang_id: "JavaScript"
-                    }
-                ],
+                languages : lang_backend_mapping,
                 selected_lang: '',
 
                 // return

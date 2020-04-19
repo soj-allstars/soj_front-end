@@ -74,6 +74,7 @@
 </template>
 
 <script>
+    import { lang_backend_mapping } from "../lib/lang_common";
     export default {
         data : function () {
             return {
@@ -82,38 +83,7 @@
                 code: '',
                 file_code: '',
                 // v-select里的表项
-                languages : [
-                    {
-                        lang: "g++",
-                        lang_id: "GXX"
-                    },
-                    {
-                        lang: "gcc",
-                        lang_id: "GCC"
-                    },
-                    {
-                        lang: "java",
-                        lang_id: "JAVA"
-                    },
-                    {
-                        lang: "python(cpython)",
-                        lang_id: "CPY"
-                    },
-                    {
-                        lang: "python(PYPY)",
-                        lang_id: "PYPY"
-                    },
-                    {
-                        lang: "go",
-                        lang_id: "GO"
-                    },
-                    {
-                        lang: "Javascript",
-                        lang_id: "JS"
-                    },
-                ],
-                
-                
+                languages : lang_backend_mapping,
             }
         },
         methods: {
@@ -192,8 +162,6 @@
                     reader.readAsText(e);
                     reader.onload = function() {
                         thisCom.file_code = this.result;
-                        // 用于调试
-                        // console.log(thisCom.file_code);
                     }
                 } else {
                     alert('The File APIs are not fully supported in this browser.');

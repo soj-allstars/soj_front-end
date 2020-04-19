@@ -21,7 +21,7 @@
                                     <v-row>
                                         <v-col class="pt-0 pb-1">
                                             <v-btn text block tile
-                                                   class="headline font-weight-medium d-flex justify-start px-0"
+                                                   class="headline font-weight-medium d-flex justify-start px-0 text-none"
                                                    :class="text_class[contests_status[index]]"
                                                    @click="enterContest(ctst)"
                                             >
@@ -111,7 +111,6 @@
                                         @click:append="show_psw = !show_psw"
                                 ></v-text-field>
                             </v-card-text>
-
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn
@@ -121,7 +120,6 @@
                                 >
                                     CANCEL
                                 </v-btn>
-
                                 <v-btn
                                         color="blue darken-2"
                                         text
@@ -147,7 +145,6 @@
                                 >
                                     CANCEL
                                 </v-btn>
-
                                 <v-btn
                                         color="blue darken-2"
                                         text
@@ -238,14 +235,14 @@
                     "SOLO": "mid-account-multiple",
                 },
                 text_class: {
-                    running: "white--text",
-                    scheduled: "blue--text text--darken-4",
-                    ended: "grey--text text--darken-1",
+                    "running": "white--text",
+                    "scheduled": "blue--text text--darken-4",
+                    "ended": "grey--text text--darken-1",
                 },
                 card_class: {
-                    running: "red lighten-1",
-                    scheduled: "blue lighten-5",
-                    ended: "",
+                    "running": "red lighten-1",
+                    "scheduled": "blue lighten-5",
+                    "ended": "",
                 },
 
                 // 每页的比赛数，需要和后端商量好
@@ -483,35 +480,7 @@
 </script>
 
 <style scoped>
-    .row_height {
-        height: 50px;
-    }
     .row_length {
         width: 500px;
-    }
-
-
-    .child {
-        background: orange;
-        position: absolute;
-        top: 50%;
-        transform: translate(0, -50%);
-    }
-
-
-    .rela_pos {
-        position: relative;
-    }
-    .abs_pos {
-        position: absolute;
-    }
-
-    .left_top {
-        left: 0;
-        top: 0;
-    }
-
-    .border {
-        border: 1px solid #aaa;
     }
 </style>
