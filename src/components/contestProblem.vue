@@ -205,13 +205,13 @@
         beforeMount : function() {
             this.pid = this.$route.query.pid;
             this.cid = this.$route.query.cid;
-            var thisCom = this;
+            let thisCom = this;
 
             $.ajax({
                 //请求方式
                 type : "GET",
                 //请求地址
-                url : thisCom.serveUrl() + '/api/contest/problem/' + thisCom.cid,
+                url : thisCom.serveUrl() + '/api/contest/problem/' + thisCom.cid + '/' + thisCom.pid + '/',
                 //请求成功
                 success : function(result) {
                     thisCom.title = result.title;

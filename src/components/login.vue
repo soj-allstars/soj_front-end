@@ -171,7 +171,7 @@
                     alert("email is empty!");
                     return;
                 }
-                if (this.r_password !== this.r_confirm_showpsw) {
+                if (this.r_password !== this.r_confirm_password) {
                     alert("confirm password doesn't match password!");
                     return;
                 }
