@@ -112,9 +112,13 @@
 
 
                                 <v-tab-item>
-                                    <v-card outlined>
-                                        reserved for detail
-                                    </v-card>
+                                    <problemSubmitRes
+                                            :request_url="this.serveUrl() + '/api/contest/submissions/' + cid + '/'"
+                                            :highlighted_id="$route.params.hlid"
+                                            :contest_mode="true"
+                                            :cid="parseInt(cid)"
+                                    >
+                                    </problemSubmitRes>
                                 </v-tab-item>
 
 
@@ -162,7 +166,7 @@
                                                         :elevation="hover ? '2' : '0'"
                                                 >
                                                     <span class="font-weight-bold">
-                                                        {{String.fromCharCode('A'.charCodeAt(0) + index) }}
+                                                        {{num_to_alpha(index) }}
                                                     </span>
                                                 </v-card>
                                             </div>
@@ -209,27 +213,27 @@
                                                         min-height="50"
                                                         class="d-inline align-center justify-center"
                                                         v-for="(pbl, index) in problems" :key="pbl.key"
-                                                        :color="std.AC_times[String.fromCharCode('A'.charCodeAt(0) + index)] ? 'light-green lighten-5' :
-                                                                    (std.wrong_numbers[String.fromCharCode('A'.charCodeAt(0) + index)] ? 'red lighten-5' :
+                                                        :color="std.AC_times[num_to_alpha(index)] ? 'light-green lighten-5' :
+                                                                    (std.wrong_numbers[num_to_alpha(index)] ? 'red lighten-5' :
                                                                         (hover ? 'light-blue lighten-5' :
                                                                         '')
                                                                     )"
                                                         :elevation="hover ? '2' : '0'"
                                                 >
                                                     <v-row no-gutters
-                                                           v-if="std.AC_times[String.fromCharCode('A'.charCodeAt(0) + index)]"
+                                                           v-if="std.AC_times[num_to_alpha(index)]"
                                                     >
                                                         <v-col class="d-flex justify-center align-center">
-                                                            {{ seconds_to_hms(std.AC_times[String.fromCharCode('A'.charCodeAt(0) + index)]) }}
+                                                            {{ seconds_to_hms(std.AC_times[num_to_alpha(index)]) }}
 
                                                         </v-col>
                                                     </v-row>
                                                     <v-row no-gutters
-                                                           v-if="std.wrong_numbers[String.fromCharCode('A'.charCodeAt(0) + index)]"
+                                                           v-if="std.wrong_numbers[num_to_alpha(index)]"
                                                     >
                                                         <v-col class="d-flex justify-center align-center">
                                                             <span class="caption">
-                                                                ( -{{ seconds_to_hms(std.wrong_numbers[String.fromCharCode('A'.charCodeAt(0) + index)]) }} )
+                                                                ( -{{ std.wrong_numbers[num_to_alpha(index)] }} )
                                                             </span>
                                                         </v-col>
                                                     </v-row>
@@ -266,52 +270,24 @@
 </template>
 
 <script>
+    import problemSubmitRes from "./problemSubmitRes";
+
     export default {
+        components: {
+            problemSubmitRes
+        },
         data: function () {
             return {
                 "cid": 0,
                 "name": "",
                 "description": "",
-                "problems": [
-                    {
-                        "id": 0,
-                        "title": "string"
-                    }
-                ],
+                "problems": [],
                 "start_time": "2020-03-08T06:18:29.124+08:00",
                 "end_time": "2020-03-08T23:18:29.124+08:00",
                 "is_running": true,
                 "registered": true,
                 "category": "string",
-                "standings": [
-                    {
-                        "user_id": 2,
-                        "username": "yjp",
-                        "solved_number": 2,
-                        "total_penalty": 1026560.72247,
-                        "AC_times": {
-                            "1": 511965.375124,
-                            "2": 510995.347346
-                        },
-                        "wrong_numbers": {
-                            "1": 1,
-                            "2": 2,
-                            "3": 1,
-                        }
-                    },
-                    {
-                        "user_id": 1,
-                        "username": "soj",
-                        "solved_number": 1,
-                        "total_penalty": 514583.141346,
-                        "AC_times": {
-                            "1": 510983.141346
-                        },
-                        "wrong_numbers": {
-                            "1": 3
-                        }
-                    }
-                ],
+                "standings": [],
 
                 contest_status: "",
                 start_date: null,
@@ -415,10 +391,6 @@
                 type : "GET",
                 // 请求地址
                 url : thisCom.serveUrl() + '/api/contest/' + this.cid + '/',
-                crossDomain: true,
-                xhrFields: {
-                    withCredentials: true
-                },
                 // 请求成功
                 success : function(result) {
                     thisCom.name = result.name;

@@ -12,7 +12,7 @@
           <v-toolbar-items>
               <v-btn text link :to="{ name: 'problemSet' }">题库</v-btn>
               <v-btn text link :to="{ name: 'contestSet', params: { pid: 1 }}">比赛</v-btn>
-              <v-btn text link :to="{ name: 'problemSubmitRes' }">提交查询</v-btn>
+              <v-btn text link :to="{ name: 'normalSubmitRes' }">提交查询</v-btn>
 
               <v-btn text link :to="{ name: 'login' }" v-if="!is_signed_in">登录</v-btn>
               <v-menu

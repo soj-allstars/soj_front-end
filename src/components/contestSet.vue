@@ -400,10 +400,6 @@
                     // 请求地址
                     url : thisCom.serveUrl() + target_url[type] + thisCom.clicked_ctst.id + '/',
                     data : post_data,
-                    crossDomain: true,
-                    xhrFields: {
-                        withCredentials: true
-                    },
                     // 请求成功
                     success : function(result) {
                         switch (type) {

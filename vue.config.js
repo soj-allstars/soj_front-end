@@ -14,5 +14,5 @@ module.exports = {
           })
       ]
   },
-  assetsDir: './static'
+  assetsDir: './static',
 }

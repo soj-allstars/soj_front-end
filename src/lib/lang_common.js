@@ -1,42 +1,33 @@
 const lang_backend_mapping = [
     {
-        lang: "g++",
+        lang: "C++ (G++ 8.3.0 C++17)",
         lang_id: "GXX"
     },
     {
-        lang: "gcc",
+        lang: "C (GCC 8.3.0 C11)",
         lang_id: "GCC"
     },
     {
-        lang: "java",
+        lang: "Java 11 (OpenJDK 11.0.5)",
         lang_id: "JAVA"
     },
     {
-        lang: "python(cpython)",
+        lang: "Python 3.8 (CPython)",
         lang_id: "CPY"
     },
     {
-        lang: "python(pypy)",
+        lang: "Python 3.6 (PyPy 7.3.1)",
         lang_id: "PYPY"
-    },
-    {
-        lang: "go",
-        lang_id: "GO"
-    },
-    {
-        lang: "Javascript",
-        lang_id: "JS"
     },
 ];
 const language_long_name = {
-    "GXX": "g++",
-    "GCC": "gcc",
-    "JAVA": "java",
-    "CPY": "python(cpy)",
-    "PYPY": "python(pypy)",
-    "GO": "go",
-    "JS": "javascript",
+    "GXX": "C++ (G++ 8.3.0 C++17)",
+    "GCC": "C (GCC 8.3.0 C11)",
+    "JAVA": "Java 11 (OpenJDK 11.0.5)",
+    "CPY": "Python 3.8 (CPython)",
+    "PYPY": "Python 3.6 (PyPy 7.3.1)",
 };
+
 const verdict_long_name = {
     "AC": "Accepted",
     "WA": "Wrong Answer",

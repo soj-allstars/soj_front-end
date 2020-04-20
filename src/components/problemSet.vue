@@ -12,7 +12,7 @@
                     <div class="text-center">
                         <v-row class="row_height">
                             <v-col cols='3' class="font-weight-black pa-0 ma-0 row_height">
-                                Id
+                                ID
                             </v-col>
                             <v-col class="font-weight-black pa-0 ma-0">
                                 Title

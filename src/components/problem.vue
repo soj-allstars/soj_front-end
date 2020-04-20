@@ -4,7 +4,7 @@
      no-gutters
     >
 <!--        这个CSS会用到public里面的fonts文件夹-->
-        <link rel="stylesheet" href="/katex.min.css">
+        <link rel="stylesheet" href="./static/css/katex.min.css">
         <v-row
          align='start'
          justify='end'
@@ -84,29 +84,33 @@
                             class="pa-2 mb-10"
                             :key="i.id"
                             >
-                                <v-row>
-                                    <v-col class="py-0 d-flex justify-space-between">
-                                        <div class='caption'>Input</div>
-                                        <v-btn x-small tile text
-                                               class="copy_btn"
-                                               @click.stop="copy_sample(sample_inputs[i - 1])">
-                                            <v-icon small>mdi-content-copy</v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                                <div class='code_font' :id="'sample_input_' + (i-1)" v-html='sample_inputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                <div class="sample_con">
+                                    <v-row>
+                                        <v-col class="py-0 d-flex justify-space-between">
+                                            <div class='caption'>Input</div>
+                                            <v-btn x-small tile text
+                                                   class="copy_btn"
+                                                   @click.stop="copy_sample(sample_inputs[i - 1])">
+                                                <v-icon small>mdi-content-copy</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                    <div class='code_font' :id="'sample_input_' + (i-1)" v-html='sample_inputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                </div>
                                 <v-divider></v-divider>
-                                <v-row>
-                                    <v-col class="py-0 d-flex justify-space-between">
-                                        <div class='caption'>Output</div>
-                                        <v-btn x-small tile text
-                                               class="copy_btn"
-                                               @click.stop="copy_sample(sample_outputs[i - 1])">
-                                            <v-icon small>mdi-content-copy</v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                                <div class="code_font" :id="'sample_output_' + (i-1)" v-html='sample_outputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                <div class="sample_con">
+                                    <v-row>
+                                        <v-col class="py-0 d-flex justify-space-between">
+                                            <div class='caption'>Output</div>
+                                            <v-btn x-small tile text
+                                                   class="copy_btn"
+                                                   @click.stop="copy_sample(sample_outputs[i - 1])">
+                                                <v-icon small>mdi-content-copy</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                    <div class="code_font" :id="'sample_output_' + (i-1)" v-html='sample_outputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                </div>
                             </v-card>
                         </template>
 
@@ -162,7 +166,6 @@
                         ],
                     }
                 );
-                console.log("rendered");
                 return converter.makeHtml(this.description);
             }
         },
@@ -255,10 +258,10 @@
         left: 5px;
     }
 
-    .copy_btn {
+    .sample_con .copy_btn {
         opacity: 0.1;
     }
-    .copy_btn:hover {
+    .sample_con:hover .copy_btn {
         opacity: 1;
     }
 </style>

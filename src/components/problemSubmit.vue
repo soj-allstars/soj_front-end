@@ -126,10 +126,6 @@
                         code: code,
                         lang: thisCom.selected_lang
                     },
-                    crossDomain: true,
-                    xhrFields: {
-                      withCredentials: true
-                    },
                     //请求成功
                     success : function(result) {
                         submission_id = result.submission_id;
@@ -137,9 +133,9 @@
                         console.log(submission_id);
                         console.log(this.data.pid);
                         thisCom.$router.push({
-                            name: 'problemSubmitRes',
+                            name: 'normalSubmitRes',
                             params: {
-                                submission_id: submission_id
+                                hlid: result.submission_id, // 高亮提交的那一行
                             }
                         })
                     },

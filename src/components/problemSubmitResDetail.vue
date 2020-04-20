@@ -49,7 +49,9 @@
                                 <div class="d-flex justify-start grey lighten-4"
                                 >
 <!--                                    <pre><code class="pa-12" v-html="code"></code></pre>-->
-                                        <pre class="pa-5 caption grey lighten-4" v-html="code"></pre>
+                                        <pre class="pa-5 caption grey lighten-4"
+                                             :class="language_formal_name[lang]"
+                                             v-html="code"></pre>
                                 </div>
                             </v-col>
                         </v-row>
@@ -83,6 +85,17 @@
                 code: '',
                 lang: '',
                 desc: null,
+
+
+                language_formal_name: {
+                    "GXX": "c++",
+                    "GCC": "c",
+                    "JAVA": "java",
+                    "CPY": "python",
+                    "PYPY": "python",
+                    "GO": "go",
+                    "JS": "javascript",
+                },
             }
         },
         computed: {
@@ -151,12 +164,7 @@
                         thisCom.submit_time = thisCom.submit_time.replace('T', ' ');
                         thisCom.submit_time = thisCom.submit_time.replace(/\.\d+/, ' UTC');
 
-                        $('pre').each(function(i, block) {
-                            hljs.highlightBlock(block);
-                            console.log("highlighted");
-                        });
-
-                        console.log('all:\n' + JSON.stringify(result));
+                        console.log('code:\n' + result.code);
 
                         // thisCom.items[0].status = thisCom.verdict;
                         // thisCom.items[0].memory_cost = thisCom.memory_usage;
@@ -165,9 +173,20 @@
                         // thisCom.items[0].language = thisCom.lang;
                     },
                     //请求失败，包含具体的错误信息
-                    error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                    error : function(e, textStatus) {
+                        if (e.status == 403) {
+                            thisCom.verdict = 'PENDING';
+                            thisCom.memory_usage = 0;
+                            thisCom.time_usage = 0;
+                            thisCom.submit_time = null;
+                            thisCom.code = '';
+                            thisCom.lang = '';
+                            thisCom.desc = 'you have no permission to check other\'s code';
+                        } else {
+                            console.log(e.status);
+                            console.log(e.responseText);
+                            alert(e.responseText);
+                        }
                     }
                 });
             }
@@ -190,9 +209,7 @@
                 this.getSubmission(this.$route.query.submission_id);
             }
         },
-        mounted() {
-            // hljs.initHighlightingOnLoad();
-        },
+        mounted() {},
         updated() {
             $('pre').each(function(i, block) {
                 hljs.highlightBlock(block);

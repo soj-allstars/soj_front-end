@@ -66,11 +66,12 @@
                             </v-col>
                         </v-row>
                     </v-card-subtitle>
-                    <v-divider />
-                    <v-card-text class='body-1 pt-8'>
-                        <p v-for="p in description.split('\n')" :key="p.id">
-                            {{p}}
-                        </p>
+                    <v-card-text class='body-1 grey--text text--darken-4 pt-8'>
+<!--                        <p v-for="p in description.split('\n')" :key="p.id">-->
+<!--                            {{p}}-->
+<!--                        </p>-->
+                        <div v-html="rendered_desc">
+                        </div>
                     </v-card-text>
                     <!-- inputs and outputs -->
                     <v-card-text>
@@ -82,27 +83,33 @@
                             class="pa-2 mb-10"
                             :key="i.id"
                             >
-                                <v-row>
-                                    <v-col class="py-0 d-flex justify-space-between">
-                                        <div class='caption'>Input</div>
-                                        <v-btn x-small tile outlined
-                                               @click.stop="copy_sample(sample_inputs[i - 1])">
-                                            <v-icon small>mdi-content-copy</v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                                <div class='code_font' :id="'sample_input_' + (i-1)" v-html='sample_inputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                <div class="sample_con">
+                                    <v-row>
+                                        <v-col class="py-0 d-flex justify-space-between">
+                                            <div class='caption'>Input</div>
+                                            <v-btn x-small tile text
+                                                   class="copy_btn"
+                                                   @click.stop="copy_sample(sample_inputs[i - 1])">
+                                                <v-icon small>mdi-content-copy</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                    <div class='code_font' :id="'sample_input_' + (i-1)" v-html='sample_inputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                </div>
                                 <v-divider></v-divider>
-                                <v-row>
-                                    <v-col class="py-0 d-flex justify-space-between">
-                                        <div class='caption'>Output</div>
-                                        <v-btn x-small tile outlined
-                                               @click.stop="copy_sample(sample_outputs[i - 1])">
-                                            <v-icon small>mdi-content-copy</v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                                <div class="code_font" :id="'sample_output_' + (i-1)" v-html='sample_outputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                <div class="sample_con">
+                                    <v-row>
+                                        <v-col class="py-0 d-flex justify-space-between">
+                                            <div class='caption'>Output</div>
+                                            <v-btn x-small tile text
+                                                   class="copy_btn"
+                                                   @click.stop="copy_sample(sample_outputs[i - 1])">
+                                                <v-icon small>mdi-content-copy</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                    <div class="code_font" :id="'sample_output_' + (i-1)" v-html='sample_outputs[i - 1].replace(/[\n]/g, "&lt;br&gt;")'></div>
+                                </div>
                             </v-card>
                         </template>
 
@@ -125,8 +132,10 @@
 </template>
 
 <script>
-    export default {
+    import sdk from 'showdown-katex';
+    import sd from 'showdown';
 
+    export default {
         data : function () {
             return {
               // 用于控制页面元素
@@ -143,6 +152,24 @@
 
                 // 比赛的参数
                 cid: null,
+            }
+        },
+        computed: {
+            rendered_desc: function () {
+                let converter = new sd.Converter({
+                        extensions: [
+                            sdk({
+                                // maybe you want katex to throwOnError
+                                throwOnError: true,
+                                // disable displayMode
+                                displayMode: false,
+                                // change errorColor to blue
+                                errorColor: '#1500ff',
+                            }),
+                        ],
+                    }
+                );
+                return converter.makeHtml(this.description);
             }
         },
         methods: {
@@ -184,11 +211,7 @@
                 //请求方式
                 type : "GET",
                 //请求地址
-                url : thisCom.serveUrl() + '/api/contest/problem/' + thisCom.cid + '/' + thisCom.pid + '/',
-                crossDomain: true,
-                xhrFields: {
-                    withCredentials: true
-                },
+                url : thisCom.serveUrl() + '/api/contest/problem/' + thisCom.cid,
                 //请求成功
                 success : function(result) {
                     thisCom.title = result.title;
@@ -265,5 +288,12 @@
     .button_icon {
         position: absolute;
         left: 5px;
+    }
+
+    .sample_con .copy_btn {
+        opacity: 0.1;
+    }
+    .sample_con:hover .copy_btn {
+        opacity: 1;
     }
 </style>

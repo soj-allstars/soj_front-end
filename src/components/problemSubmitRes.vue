@@ -1,98 +1,84 @@
 <template>
-    <v-content
-     fluid
-     no-gutters
-    >
-        <v-row
-         align='center'
-         justify='center'
+    <div>
+        <v-simple-table fixed-header
+                        height="450px"
         >
-            <v-col cols='10' align="center">
-                <v-card tile
-                        class="pa-10"
+            <template v-slot:default>
+                <thead>
+                <tr>
+                    <th class="text-left">ID</th>
+                    <th class="text-left">Verdict</th>
+                    <th class="text-left">Time Cost</th>
+                    <th class="text-left">Memory Cost</th>
+                    <th class="text-left">Language</th>
+                    <th class="text-left">Problem ID</th>
+                    <th class="text-left">Username</th>
+                    <th class="text-left">Submit Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="res in results" :key="res.id"
+                    :class="(highlighted_id) ?
+                                ((highlighted_id === res.id) ?
+                                    'lime lighten-5'
+                                : '')
+                            : '' "
                 >
-                    <v-row>
-                        <v-col>
-                            <v-simple-table fixed-header
-                                            height="450px"
-                            >
-                                <template v-slot:default>
-                                    <thead>
-                                    <tr>
-                                        <th class="text-left">ID</th>
-                                        <th class="text-left">Verdict</th>
-                                        <th class="text-left">Time Cost</th>
-                                        <th class="text-left">Memory Cost</th>
-                                        <th class="text-left">Language</th>
-                                        <th class="text-left">Problem ID</th>
-                                        <th class="text-left">Username</th>
-                                        <th class="text-left">Submit Time</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="res in results" :key="res.id"
-                                        :class="($route.params.submission_id) ?
-                                                    (($route.params.submission_id === res.id) ?
-                                                        'lime lighten-5'
-                                                    : '')
-                                                : '' "
-                                    >
-                                        <td class="text-left">
-                                            <v-btn  text block
-                                                    class="d-flex justify-start px-0"
-                                                    @click="show_detail(res.id)"
-                                                    >
-                                                {{res.id}}
-                                            </v-btn>
-                                        </td>
-                                        <td class="text-left"
-                                            :class="verdict_color[res.verdict]"
-                                        >
-                                            {{verdict_detail[res.verdict]}}
-                                        </td>
-                                        <td class="text-left caption">
-                                            {{res.time}} ms
-                                        </td>
-                                        <td class="text-left caption">
-                                            {{res.memory}} KB
-                                        </td>
-                                        <td class="text-left">{{language_detail[res.lang]}}</td>
-                                        <td class="text-left">
-                                            <v-btn  text block
-                                                    class="d-flex justify-start px-0"
-                                                    :to="{ name: 'problem', query: {pid : res.problem_id} }">
-                                                {{res.problem_id}}
-                                            </v-btn>
-                                        </td>
-                                        <td class="text-left">{{res.user}}</td>
-                                        <td class="text-left caption">{{res.submit_time.replace('T', ' ').replace(/\..*/, '')}}</td>
-                                    </tr>
-                                    </tbody>
-                                </template>
-                            </v-simple-table>
-                        </v-col>
-
-                    </v-row>
-                    <v-row>
-                        <v-pagination
-                                :length="Math.ceil(submission_count / page_length)"
-                                v-model="selected_page"
-                                @input="click_input"
-                                :total-visible="10"
-                        ></v-pagination>
-                    </v-row>
-
-                    <v-dialog v-model="show_res_detail"
-                              max-width="1000px"
+                    <td class="text-left">
+                        <v-btn  text block
+                                class="d-flex justify-start px-0"
+                                @click="show_detail(res.id)"
+                                >
+                            {{res.id}}
+                        </v-btn>
+                    </td>
+                    <td class="text-left"
+                        :class="verdict_color[res.verdict]"
                     >
-                        <problemSubmitResDetail :submission_id="res_id"
-                        ></problemSubmitResDetail>
-                    </v-dialog>
-
-                </v-card>
+                        {{verdict_detail[res.verdict]}}
+                    </td>
+                    <td class="text-left caption">
+                        {{res.time}} ms
+                    </td>
+                    <td class="text-left caption">
+                        {{res.memory}} KB
+                    </td>
+                    <td class="text-left">{{language_detail[res.lang]}}</td>
+                    <td class="text-left">
+                        <!--分成比赛的列表页和非比赛的列表页……-->
+                        <!--耦合度极高……但是不管了-->
+                        <v-btn  text block
+                                class="d-flex justify-start px-0"
+                                :to="contest_mode ?
+                                      { name: 'contestProblem', query: { pid: res.problem_no, cid: cid} }
+                                    : { name: 'problem', query: {pid : res.problem_id} }">
+                            {{contest_mode ? res.problem_no : res.problem_id}}
+                        </v-btn>
+                    </td>
+                    <td class="text-left">{{res.user}}</td>
+                    <td class="text-left caption">{{res.submit_time.replace('T', ' ').replace(/\..*/, '')}}</td>
+                </tr>
+                </tbody>
+            </template>
+        </v-simple-table>
+        <v-row class="pt-3">
+            <v-col>
+                <v-pagination
+                        :length="Math.ceil(submission_count / page_length)"
+                        v-model="selected_page"
+                        @input="click_input"
+                        :total-visible="10"
+                ></v-pagination>
             </v-col>
         </v-row>
-    </v-content>
+
+        <v-dialog v-model="show_res_detail"
+                  max-width="1000px"
+        >
+            <problemSubmitResDetail :submission_id="res_id"
+            ></problemSubmitResDetail>
+        </v-dialog>
+    </div>
 </template>
 
 <script>
@@ -100,8 +86,30 @@ import router from "../router";
 import problemSubmitResDetail from './problemSubmitResDetail';
 import { verdict_font_color, verdict_long_name, language_long_name} from "../lib/lang_common";
 export default {
+    name: "problemSubmitRes",
     components: {
         problemSubmitResDetail,
+    },
+    props: {
+        request_url: {
+            type: String,
+            default: null,
+        },
+        page: {
+            type: Number,
+            default: 1,
+        },
+        highlighted_id: {
+            type: Number,
+        },
+        contest_mode: {
+            type: Boolean,
+            default: false,
+        },
+        cid: {
+            type: Number,
+            default: null,
+        }
     },
     data : function () {
         return {
@@ -132,7 +140,7 @@ export default {
     },
     methods: {
         click_input: function (num) {
-            router.push({name: 'problemSubmitRes', query: {page: num}});
+            this.getSubmissionPage(num);
         },
 
         show_detail: function (res_id) {
@@ -146,12 +154,14 @@ export default {
                 // 请求方式
                 type : "GET",
                 // 请求地址
-                url : thisCom.serveUrl() + '/api/submissions' + '/',
+                url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions' + '/',
+                // url : thisCom.serveUrl() + '/api/submissions' + '/',
                 data : {
                     page: page_num,
                 },
                 // 请求成功
                 success : function(result) {
+                    console.log(thisCom.request_url);
                     thisCom.submission_count = result.count;
                     thisCom.next = result.next;
                     thisCom.previous = result.previous;
@@ -217,9 +227,14 @@ export default {
     },
 
     beforeMount() {
+        let thisCom = this;
         let page_num = 1;
-        if (this.$route.query.page) {
-            page_num = this.$route.query.page;
+
+        if (this.page) {
+            this.getSubmissionPage(this.submission_id);
+        }
+        else if (this.$route.query.page) {
+            this.getSubmissionPage(this.$route.query.submission_id);
         }
         this.getSubmissionPage(page_num);
     },

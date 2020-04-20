@@ -14,6 +14,7 @@ import contestSet from "@/components/contestSet";
 import contestProblem from "@/components/contestProblem";
 import contestProblemSubmit from "@/components/contestProblemSubmit";
 import liveResQuery from "@/components/liveResQuery";
+import normalSubmitRes from "@/components/normalSubmitRes";
 
 Vue.use(Router);
 
@@ -33,6 +34,11 @@ const routes = {
                     path: '/problemSubmit',
                     name: 'problemSubmit',
                     component: problemSubmit,
+                },
+                {
+                    path: '/normalSubmitRes',
+                    name: 'normalSubmitRes',
+                    component: normalSubmitRes,
                 },
                 {
                     path: '/problemSubmitRes',

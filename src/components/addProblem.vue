@@ -50,7 +50,7 @@
                                             <v-col>
                                                 <v-text-field
                                                  outlined
-                                                 label='Memory Limit(KB)'
+                                                 label='Memory Limit(MB)'
                                                  v-model="memory_limit"
                                                 ></v-text-field>
                                             </v-col>
@@ -205,7 +205,7 @@
                                             </v-col>
                                             <v-col>
                                                 <v-btn block @click.stop="start_problem_test(problem_id)" outlined>
-                                                    test solution and checker
+                                                    test solution and generate answer files
                                                 </v-btn>
                                             </v-col>
                                             <v-col cols="2">
@@ -321,7 +321,7 @@
                 description: '',
                 note: '',
                 time_limit: 2000,
-                memory_limit: 131072,
+                memory_limit: 256,
                 sample_inputs: [],
                 json_file: null,
                 json_text: '',
@@ -334,91 +334,47 @@
                 upload_json_btn_text: ['write inputs(JSON) manually', 'upload inputs(JSON) file'],
                 json_btn_text_index: 0,
                 upload_json: true,
-                
+
                 // checker_type相关
                 checker_type_items: [
                     {
-                        checker_name: "same",
-                        checker_value: "same"
-                    },
-                    {
-                        checker_name: "acmp",
-                        checker_value: "acmp"
-                    },
-                    {
-                        checker_name: "caseicmp",
-                        checker_value: "caseicmp"
-                    },
-                    {
-                        checker_name: "casencmp",
-                        checker_value: "casencmp"
-                    },
-                    {
-                        checker_name: "casewcmp",
-                        checker_value: "casewcmp"
-                    },
-                    {
-                        checker_name: "dcmp",
-                        checker_value: "dcmp"
-                    },
-                    {
-                        checker_name: "fcmp",
+                        checker_name: "fcmp.cpp - Lines, doesn't ignore whitespaces",
                         checker_value: "fcmp"
                     },
                     {
-                        checker_name: "hcmp",
+                        checker_name: "hcmp.cpp - Single huge integer",
                         checker_value: "hcmp"
                     },
                     {
-                        checker_name: "icmp",
-                        checker_value: "icmp"
-                    },
-                    {
-                        checker_name: "lcmp",
+                        checker_name: "lcmp.cpp - Lines, ignores whitespaces",
                         checker_value: "lcmp"
                     },
                     {
-                        checker_name: "ncmp",
+                        checker_name: "ncmp.cpp - Single or more int64, ignores whitespaces",
                         checker_value: "ncmp"
                     },
                     {
-                        checker_name: "nyesno",
+                        checker_name: "nyesno.cpp - Zero or more yes/no, case insensetive",
                         checker_value: "nyesno"
                     },
                     {
-                        checker_name: "pointscmp",
-                        checker_value: "pointscmp"
-                    },
-                    {
-                        checker_name: "rcmp",
-                        checker_value: "rcmp"
-                    },
-                    {
-                        checker_name: "rcmp4",
+                        checker_name: "rcmp4.cpp - Single or more double, max any error 1E-4",
                         checker_value: "rcmp4"
                     },
                     {
-                        checker_name: "rcmp6",
+                        checker_name: "rcmp6.cpp - Single or more double, max any error 1E-6",
                         checker_value: "rcmp6"
                     },
                     {
-                        checker_name: "rcmp9",
+                        checker_name: "rcmp9.cpp - Single or more double, max any error 1E-9",
                         checker_value: "rcmp9"
                     },
                     {
-                        checker_name: "rncmp",
-                        checker_value: "rncmp"
-                    },
-                    {
-                        checker_name: "uncmp",
-                        checker_value: "uncmp"
-                    },
-                    {
-                        checker_name: "wcmp",
+                        checker_name: "wcmp.cpp - Sequence of tokens",
                         checker_value: "wcmp"
                     },
                     {
-                        checker_name: "yesno",
+                        checker_name: "yesno.cpp - Single yes or no, case insensetive",
                         checker_value: "yesno"
                     },
                     {
@@ -621,7 +577,7 @@
                         title: thisCom.title,
                         description: thisCom.description,
                         time_limit: thisCom.time_limit,
-                        memory_limit: thisCom.memory_limit,
+                        memory_limit: thisCom.memory_limit * 1024,  // 传给后端的是KB，所以要乘以1024
                         note: thisCom.note,
                         sample_inputs: JSON.stringify(thisCom.sample_inputs),
                         checker_type: thisCom.selected_checker_type,
@@ -629,10 +585,6 @@
                         inputs: inputs,
                         solution_code: solution,
                         solution_lang: thisCom.selected_lang,
-                    },
-                    crossDomain: true,
-                    xhrFields: {
-                        withCredentials: true
                     },
                     //请求成功
                     success : function(result) {

@@ -58,6 +58,13 @@
                                             @click:append="r_showpsw = !r_showpsw"
                                     ></v-text-field>
                                     <v-text-field
+                                            v-model="r_confirm_password"
+                                            :append-icon="r_confirm_showpsw ? 'mdi-eye' : 'mdi-eye-off'"
+                                            :type="r_confirm_showpsw ? 'text' : 'password'"
+                                            label="Confirm Password"
+                                            @click:append="r_confirm_showpsw = !r_confirm_showpsw"
+                                    ></v-text-field>
+                                    <v-text-field
                                             v-model="r_email"
                                             label='Email'
                                     ></v-text-field>
@@ -96,7 +103,6 @@
                 // 控制页面元素
                 show_login: true,
 
-
                 l_showpsw: false,
                 l_username: "",
                 l_password: "",
@@ -104,7 +110,9 @@
 
                 r_username: "",
                 r_password: "",
+                r_confirm_password: "",
                 r_showpsw: false,
+                r_confirm_showpsw: false,
                 r_email: "",
             }
         },
@@ -163,6 +171,10 @@
                     alert("email is empty!");
                     return;
                 }
+                if (this.r_password !== this.r_confirm_showpsw) {
+                    alert("confirm password doesn't match password!");
+                    return;
+                }
 
                 $.ajax({
                     //请求方式
@@ -180,6 +192,9 @@
                         alert("注册成功！");
                         thisCom.r_username = "";
                         thisCom.r_password = "";
+                        thisCom.r_showpsw = false;
+                        thisCom.r_confirm_password = "";
+                        thisCom.r_confirm_showpsw = false;
                         thisCom.r_email = "";
                         thisCom.show_login = true;
                     },

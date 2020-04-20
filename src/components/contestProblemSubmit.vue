@@ -74,6 +74,7 @@
 </template>
 
 <script>
+    import { lang_backend_mapping } from "../lib/lang_common"
     export default {
         data : function () {
             return {
@@ -84,38 +85,7 @@
                 code: '',
                 file_code: '',
                 // v-select里的表项
-                languages : [
-                    {
-                        lang: "g++",
-                        lang_id: "GXX"
-                    },
-                    {
-                        lang: "gcc",
-                        lang_id: "GCC"
-                    },
-                    {
-                        lang: "java",
-                        lang_id: "JAVA"
-                    },
-                    {
-                        lang: "python(cpython)",
-                        lang_id: "CPY"
-                    },
-                    {
-                        lang: "python(PYPY)",
-                        lang_id: "PYPY"
-                    },
-                    {
-                        lang: "go",
-                        lang_id: "GO"
-                    },
-                    {
-                        lang: "Javascript",
-                        lang_id: "JS"
-                    },
-                ],
-                
-                
+                languages : lang_backend_mapping,
             }
         },
         methods: {
@@ -160,10 +130,6 @@
                         lang: thisCom.selected_lang,
                         contest_id: thisCom.cid,
                     },
-                    crossDomain: true,
-                    xhrFields: {
-                      withCredentials: true
-                    },
                     //请求成功
                     success : function(result) {
                         submission_id = result.submission_id;
@@ -171,10 +137,13 @@
                         console.log(submission_id);
                         console.log(this.data.pid);
                         thisCom.$router.push({
-                            name: 'problemSubmitResDetail',
+                            name: 'contest',
                             query: {
-                                submission_id: submission_id
-                            }
+                                cid: thisCom.cid,
+                            },
+                            params: {
+                                hlid: result.submission_id,  // 高亮提交的那一行
+                            },
                         })
                     },
                     //请求失败，包含具体的错误信息
