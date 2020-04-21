@@ -31,22 +31,22 @@ const routes = {
                     component: problem,
                 },
                 {
-                    path: '/problemSubmit',
+                    path: '/problemsubmit',
                     name: 'problemSubmit',
                     component: problemSubmit,
                 },
                 {
-                    path: '/normalSubmitRes',
+                    path: '/normalsubmitres',
                     name: 'normalSubmitRes',
                     component: normalSubmitRes,
                 },
                 {
-                    path: '/problemSubmitRes',
+                    path: '/problemsubmitres',
                     name: 'problemSubmitRes',
                     component: problemSubmitRes,
                 },
                 {
-                    path: '/problemSet',
+                    path: '/problemset',
                     name: 'problemSet',
                     component: problemSet,
                 },
@@ -56,17 +56,17 @@ const routes = {
                     component: login,
                 },
                 {
-                    path: '/addProblem',
+                    path: '/addproblem',
                     name: 'addProblem',
                     component: addProblem,
                 },
                 {
-                    path: '/problemSubmitResDetail',
+                    path: '/problemsubmitresdetail',
                     name: 'problemSubmitResDetail',
                     component: problemSubmitResDetail,
                 },
                 {
-                    path: '/contestSet',
+                    path: '/contestset',
                     name: 'contestSet',
                     component: contestSet,
                 },
@@ -76,17 +76,17 @@ const routes = {
                     component: contest,
                 },
                 {
-                    path: '/contestProblem',
+                    path: '/contestproblem',
                     name: 'contestProblem',
                     component: contestProblem,
                 },
                 {
-                    path: '/contestProblemSubmit',
+                    path: '/contestproblemsubmit',
                     name: 'contestProblemSubmit',
                     component: contestProblemSubmit,
                 },
                 {
-                    path: '/liveResQuery',
+                    path: '/liveresquery',
                     name: 'liveResQuery',
                     component: liveResQuery,
                 },

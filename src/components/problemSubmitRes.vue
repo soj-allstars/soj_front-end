@@ -27,13 +27,14 @@
                     <td class="text-left">
                         <v-btn  text block
                                 class="d-flex justify-start px-0"
-                                @click="show_detail(res.id)"
+                                :to="{ name: 'problemSubmitResDetail', query: { submission_id: res.id } }"
                                 >
                             {{res.id}}
                         </v-btn>
                     </td>
-                    <td class="text-left"
+                    <td class="text-left show_res_btn"
                         :class="verdict_color[res.verdict]"
+                        @click="show_detail(res.id)"
                     >
                         {{verdict_detail[res.verdict]}}
                     </td>
@@ -120,6 +121,10 @@ export default {
             results: null,
             res_id: null,
 
+            // websocket of submission
+            ws: null,
+            resid_resobj_mapping: new Map(),
+
             // 一页的提交数，需要和后端协调，目前定为20
             page_length: 20,
             
@@ -150,93 +155,101 @@ export default {
 
         getSubmissionPage: function (page_num) {
             let thisCom = this;
-            $.ajax({
-                // 请求方式
-                type : "GET",
-                // 请求地址
-                url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions' + '/',
-                // url : thisCom.serveUrl() + '/api/submissions' + '/',
-                data : {
-                    page: page_num,
-                },
-                // 请求成功
-                success : function(result) {
-                    console.log(thisCom.request_url);
-                    thisCom.submission_count = result.count;
-                    thisCom.next = result.next;
-                    thisCom.previous = result.previous;
-                    thisCom.results = result.results;
-                },
-                // 请求失败，包含具体的错误信息
-                error : function(e){
-                    console.log(e.status);
-                    console.log(e.responseText);
-                    alert(e.responseText);
-                }
-            });
+            let ws = null;
+            if (!thisCom.ws) {
+                ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
+                ws.onopen = function (evt) {
+                    /* eslint-disable no-console */
+                    console.log("problemsubmitres ws connection open ...");
 
-            let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
-
-            ws.onopen = function(evt) {
-                console.log("WS connection open ...");
-                if (!thisCom.results) {
-                    // 如果ajax还没返回就再等等
-                    setTimeout(ws.onopen, 250);
-                    return;
-                }
-                if (thisCom.$route.params.hasOwnProperty("submission_id")) {
                     let post_data = {
-                        type: "detail",
-                        submission_id: thisCom.$route.params.submission_id,
+                        type: "all"
                     };
                     ws.send(JSON.stringify(post_data));
-                    console.log('send : ' + JSON.stringify(post_data));
-                }
-                for (let res of thisCom.results) {
-                    if (res.verdict === "PENDING") {
-                        let post_data = {
-                            type: "detail",
-                            submission_id: res.id,
-                        };
-                        ws.send(JSON.stringify(post_data));
-                        console.log('send : ' + JSON.stringify(post_data));
-                    }
-                }
-            };
 
-            ws.onmessage = function(evt) {
-                console.log( "WS received Message: " + evt.data);
-                let recv_data = JSON.parse(evt.data);
-                if (recv_data.hasOwnProperty("id")) {
-                    // 遍历20个项……应该还好吧（？
-                    for (let i = 0; i < thisCom.results.length; ++i) {
-                        if (thisCom.results[i].id === recv_data.id) {
-                            thisCom.$set(thisCom.results[i], "verdict", recv_data.verdict);
-                            thisCom.$set(thisCom.results[i], "time", recv_data.time);
-                            thisCom.$set(thisCom.results[i], "memory", recv_data.memory);
-                            break;
+
+                    $.ajax({
+                        // 请求方式
+                        type : "GET",
+                        // 请求地址
+                        url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions/',
+                        // url : thisCom.serveUrl() + '/api/submissions' + '/',
+                        data : {
+                            page: page_num,
+                        },
+                        // 请求成功
+                        success : function(result) {
+                            // console.log(thisCom.request_url);
+                            thisCom.submission_count = result.count;
+                            thisCom.next = result.next;
+                            thisCom.previous = result.previous;
+                            thisCom.results = result.results;
+
+                            // results[x].id到result[x]的mapping
+                            thisCom.resid_resobj_mapping.clear();
+
+                            for (let i = 0; i < thisCom.results.length; ++i) {
+                                // 一定要用这个方式，否则则是看做Object添加属性了
+                                thisCom.resid_resobj_mapping.set(thisCom.results[i].id, thisCom.results[i]);
+                            }
+
+                        },
+                        // 请求失败，包含具体的错误信息
+                        error : function(e){
+                            console.error(e.status);
+                            console.error(e.responseText);
+                            alert(e.responseText);
                         }
-                    }
-                }
-            };
+                    });
+                };
+                ws.onmessage = function (evt) {
+                    console.log("problemsubmitres this.ws received Message: " + evt.data);
 
-            ws.onclose = function(evt) {
-                console.log("WS connection closed.");
-            };
+                    let recv_data = JSON.parse(evt.data);
+                    if (recv_data.hasOwnProperty("id")) {
+                        if (thisCom.resid_resobj_mapping.has(recv_data.id)) {
+                            let res = thisCom.resid_resobj_mapping.get(recv_data.id);
+                            thisCom.$set(res, "verdict", recv_data.verdict);
+                            thisCom.$set(res, "time", recv_data.time);
+                            thisCom.$set(res, "memory", recv_data.memory);
+                        }
+
+                        // 遍历方法，蠢毙了
+                        // for (let i = 0; i < thisCom.results.length; ++i) {
+                        //     if (thisCom.results[i].id === recv_data.id) {
+                        //         thisCom.$set(thisCom.results[i], "verdict", recv_data.verdict);
+                        //         thisCom.$set(thisCom.results[i], "time", recv_data.time);
+                        //         thisCom.$set(thisCom.results[i], "memory", recv_data.memory);
+                        //         break;
+                        //     }
+                        // }
+                    }
+                };
+                ws.onclose = function (evt) {
+                    console.log("this.ws connection closed.");
+                    /* eslint-enable no-console */
+                };
+
+                thisCom.ws = ws;
+            }
         },
     },
 
     beforeMount() {
-        let thisCom = this;
         let page_num = 1;
-
         if (this.page) {
             this.getSubmissionPage(this.submission_id);
-        }
-        else if (this.$route.query.page) {
+        } else if (this.$route.query.page) {
             this.getSubmissionPage(this.$route.query.submission_id);
+        } else {
+            this.getSubmissionPage(page_num);
         }
-        this.getSubmissionPage(page_num);
+    },
+
+    beforeDestroy() {
+        if (this.ws) {
+            this.ws.close();
+        }
     },
 
     beforeRouteUpdate(to, from, next) {
@@ -248,7 +261,13 @@ export default {
         this.getSubmissionPage(page_num);
 
         next();
-    }
+    },
 
 }
 </script>
+
+<style scoped>
+    .show_res_btn:hover {
+        cursor: pointer;
+    }
+</style>

@@ -105,6 +105,7 @@
                 let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
 
                 ws.onopen = function(evt) {
+                    /* eslint-disable no-console */
                     console.log("WS connection open ...");
                     ws.send(JSON.stringify(post_data));
                     console.log('send : ' + JSON.stringify(post_data));
@@ -119,6 +120,7 @@
 
                 ws.onclose = function(evt) {
                     console.log("WS connection closed.");
+                    /* eslint-enable no-console */
                 };
             }
         },

@@ -14,7 +14,7 @@
                                     v-if="show_login"
                             >
                                 <v-card-title>
-                                    Login
+                                    登录
                                 </v-card-title>
                                 <v-card-text>
                                     <v-text-field
@@ -31,19 +31,20 @@
                                     <v-checkbox v-model="l_keep" label="Remember me"></v-checkbox>
                                 </v-card-text>
                                 <v-card-text class="pt-0">
-                                    <a @click="show_login = false">No account? Register here</a>
+                                    <a @click="show_login = false">没有账号? 注册</a>
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-btn block @click.stop="login">
-                                        login
+                                        登录
                                     </v-btn>
                                 </v-card-actions>
                             </v-card>
+
                             <v-card tile class="pa-12"
                                     v-if="!show_login"
                             >
                                 <v-card-title>
-                                    Register
+                                    注册
                                 </v-card-title>
                                 <v-card-text>
                                     <v-text-field
@@ -70,11 +71,11 @@
                                     ></v-text-field>
                                 </v-card-text>
                                 <v-card-text class="pt-0">
-                                    <a @click="show_login = true">Have an account? Login here</a>
+                                    <a @click="show_login = true">已有账号? 登录</a>
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-btn block @click.stop="register">
-                                        register
+                                        注册
                                     </v-btn>
                                 </v-card-actions>
                             </v-card>
@@ -142,17 +143,17 @@
                     },
                     //请求成功
                     success : function(result) {
-                        console.log('==============');
-                        console.log(result);
                         thisCom.$router.push({
                             name: 'problemSet'
                         });
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e){
-                      console.log(e.status);
-                      console.log(e.responseText);
-                      alert(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
+                        alert(e.responseText);
+                        /* eslint-enable no-console */
                     },
                 });
             },
@@ -200,9 +201,11 @@
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
                         alert(e.responseText);
+                        /* eslint-enable no-console */
                     },
                 });
             }

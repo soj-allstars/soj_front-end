@@ -36,7 +36,7 @@
                                             <v-row>
                                                 <v-col>
                                                     <v-icon class="mr-2">mdi-flag</v-icon>
-                                                    <span class="text--secondary">{{lang}}</span>
+                                                    <span class="text--secondary">{{language_long_name[lang]}}</span>
                                                 </v-col>
                                             </v-row>
                                         </div>
@@ -49,7 +49,7 @@
                                 <div class="d-flex justify-start grey lighten-4"
                                 >
 <!--                                    <pre><code class="pa-12" v-html="code"></code></pre>-->
-                                        <pre class="pa-5 caption grey lighten-4"
+                                        <pre class="pa-5 grey lighten-4"
                                              :class="language_formal_name[lang]"
                                              v-html="code"></pre>
                                 </div>
@@ -72,13 +72,14 @@
 
 <script>
     import hljs from 'highlight.js';
+    import { language_long_name, language_formal_name } from '../lib/lang_common'
 
     export default {
         name: "problemSubmitResDetail",
         props: ["submission_id"],
         data: function () {
             return {
-                verdict: 'PENDING',
+                verdict: "CE",
                 memory_usage: 0,
                 time_usage: 0,
                 submit_time: null,
@@ -86,16 +87,9 @@
                 lang: '',
                 desc: null,
 
+                language_long_name: language_long_name,
+                language_formal_name: language_formal_name,
 
-                language_formal_name: {
-                    "GXX": "c++",
-                    "GCC": "c",
-                    "JAVA": "java",
-                    "CPY": "python",
-                    "PYPY": "python",
-                    "GO": "go",
-                    "JS": "javascript",
-                },
             }
         },
         computed: {
@@ -128,6 +122,7 @@
                             let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
 
                             ws.onopen = function(evt) {
+                                /* eslint-disable no-console */
                                 console.log("WS connection open ...");
                                 let post_data = {
                                     type: "detail",
@@ -137,7 +132,7 @@
                             };
 
                             ws.onmessage = function(evt) {
-                                console.log( "WS received Message: " + evt.data);
+                                console.log( "submitResDetail WS received Message: " + evt.data);
                                 let recv_data = JSON.parse(evt.data);
                                 if (recv_data.hasOwnProperty("id")) {
                                     thisCom.verdict = recv_data.verdict;
@@ -149,6 +144,7 @@
                             ws.onclose = function(evt) {
                                 console.log("WS connection closed.");
                             };
+                            /* eslint-enable no-console */
                         }
 
                         thisCom.code = thisCom.code.replace(/[<>]/g, function (word) {
@@ -163,14 +159,6 @@
 
                         thisCom.submit_time = thisCom.submit_time.replace('T', ' ');
                         thisCom.submit_time = thisCom.submit_time.replace(/\.\d+/, ' UTC');
-
-                        console.log('code:\n' + result.code);
-
-                        // thisCom.items[0].status = thisCom.verdict;
-                        // thisCom.items[0].memory_cost = thisCom.memory_usage;
-                        // thisCom.items[0].time_cost = thisCom.time_usage;
-                        // thisCom.items[0].submit_time = thisCom.submit_time;
-                        // thisCom.items[0].language = thisCom.lang;
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e, textStatus) {
@@ -183,8 +171,8 @@
                             thisCom.lang = '';
                             thisCom.desc = 'you have no permission to check other\'s code';
                         } else {
-                            console.log(e.status);
-                            console.log(e.responseText);
+                            console.error(e.status);
+                            console.error(e.responseText);
                             alert(e.responseText);
                         }
                     }
@@ -226,6 +214,11 @@
 </script>
 
 <style scoped>
+    code, kbd, pre, samp {
+        font-family: monospace, monospace !important;
+        font-size: .75rem !important;
+    }
+
     pre code::before {
         content: "" !important;
         letter-spacing: 0 !important;
