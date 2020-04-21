@@ -289,6 +289,9 @@
                 "category": "string",
                 "standings": [],
 
+                // 用于获取standing的websocket
+                ws: null,
+
                 contest_status: "",
                 start_date: null,
                 end_date: null,
@@ -384,7 +387,6 @@
         beforeMount() {
             this.cid = this.$route.query.cid;
             let thisCom = this;
-            console.log('beforemount: ' + this.cid);
 
             $.ajax({
                 // 请求方式
@@ -409,16 +411,16 @@
                     thisCom.interval_value = setInterval(thisCom.updateTime, 1000);
 
 
-                    let ws = new WebSocket("ws://" + location.hostname + "/ws/contest/standings/");
+                    thisCom.ws = new WebSocket("ws://" + location.hostname + "/ws/contest/standings/");
 
-                    ws.onopen = function(evt) {
+                    thisCom.ws.onopen = function(evt) {
                         console.log("WS connection open ...");
-                        ws.send('{"contest_id":' + thisCom.cid + '}');
+                        thisCom.ws.send('{"contest_id":' + thisCom.cid + '}');
                         console.log('contest_id: ' + thisCom.cid);
                     };
 
-                    ws.onmessage = function(evt) {
-                        console.log( "WS received Message: " + evt.data);
+                    thisCom.ws.onmessage = function(evt) {
+                        console.log( "stadings WS received Message: " + evt.data);
                         let recv_data = JSON.parse(evt.data);
 
                         if (recv_data.ok) {
@@ -429,7 +431,7 @@
                         }
                     };
 
-                    ws.onclose = function(evt) {
+                    thisCom.ws.onclose = function(evt) {
                         console.log("WS connection closed.");
                     };
                 },
@@ -449,6 +451,12 @@
             // don't forget to call next()
             // 不允许通过这个来改变那个contest
 
+            next();
+        },
+
+        beforeRouteLeave (to, from, next) {
+            // 离开路由时关闭websocket
+            this.ws.close();
             next();
         }
     }

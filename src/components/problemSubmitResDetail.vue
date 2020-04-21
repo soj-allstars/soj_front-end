@@ -78,7 +78,7 @@
         props: ["submission_id"],
         data: function () {
             return {
-                verdict: 'PENDING',
+                verdict: "CE",
                 memory_usage: 0,
                 time_usage: 0,
                 submit_time: null,
@@ -137,7 +137,7 @@
                             };
 
                             ws.onmessage = function(evt) {
-                                console.log( "WS received Message: " + evt.data);
+                                console.log( "submitResDetail WS received Message: " + evt.data);
                                 let recv_data = JSON.parse(evt.data);
                                 if (recv_data.hasOwnProperty("id")) {
                                     thisCom.verdict = recv_data.verdict;

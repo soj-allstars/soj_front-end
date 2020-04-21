@@ -119,6 +119,9 @@ export default {
             next: null,
             results: null,
             res_id: null,
+            // submission的websocket
+            ws: null,
+            resid_resobj_mapping: {},
 
             // 一页的提交数，需要和后端协调，目前定为20
             page_length: 20,
@@ -150,11 +153,72 @@ export default {
 
         getSubmissionPage: function (page_num) {
             let thisCom = this;
+
+            if (!this.ws) {
+                let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
+                ws.onopen = function (evt) {
+                    console.log("problemsubmitres ws connection open ...");
+                    // if (thisCom.$route.params.hasOwnProperty("submission_id")) {
+                    //     let post_data = {
+                    //         type: "detail",
+                    //         submission_id: thisCom.$route.params.submission_id,
+                    //     };
+                    //     this.ws.send(JSON.stringify(post_data));
+                    //     console.log('send : ' + JSON.stringify(post_data));
+                    // }
+                    // for (let res of thisCom.results) {
+                    //     if (res.verdict === "PENDING") {
+                    //         let post_data = {
+                    //             type: "detail",
+                    //             submission_id: res.id,
+                    //         };
+                    //         this.ws.send(JSON.stringify(post_data));
+                    //         console.log('send : ' + JSON.stringify(post_data));
+                    //     }
+                    // }
+
+                    let post_data = {
+                        type: "all"
+                    };
+                    ws.send(JSON.stringify(post_data));
+                };
+                ws.onmessage = function (evt) {
+                    console.log("problemsubmitres this.ws received Message: " + evt.data);
+
+                    let recv_data = JSON.parse(evt.data);
+                    if (recv_data.hasOwnProperty("id")) {
+                        if (thisCom.resid_resobj_mapping.hasOwnProperty(recv_data.id)) {
+                            let res = this.resid_resobj_mapping[recv_data.id];
+                            thisCom.$set(res, "verdict", recv_data.verdict);
+                            thisCom.$set(res, "time", recv_data.time);
+                            thisCom.$set(res, "memory", recv_data.memory);
+
+                            console.log("edited");
+                        }
+
+                        // 遍历方法，蠢毙了
+                        // for (let i = 0; i < thisCom.results.length; ++i) {
+                        //     if (thisCom.results[i].id === recv_data.id) {
+                        //         thisCom.$set(thisCom.results[i], "verdict", recv_data.verdict);
+                        //         thisCom.$set(thisCom.results[i], "time", recv_data.time);
+                        //         thisCom.$set(thisCom.results[i], "memory", recv_data.memory);
+                        //         break;
+                        //     }
+                        // }
+                    }
+                };
+                ws.onclose = function (evt) {
+                    console.log("this.ws connection closed.");
+                };
+
+                this.ws = ws;
+            }
+            
             $.ajax({
                 // 请求方式
                 type : "GET",
                 // 请求地址
-                url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions' + '/',
+                url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions/',
                 // url : thisCom.serveUrl() + '/api/submissions' + '/',
                 data : {
                     page: page_num,
@@ -166,6 +230,14 @@ export default {
                     thisCom.next = result.next;
                     thisCom.previous = result.previous;
                     thisCom.results = result.results;
+
+                    // results[x].id到result[x]的mapping
+                    thisCom.resid_resobj_mapping = {};
+
+                    for (let i = 0; i < thisCom.results.length; ++i) {
+                        thisCom.resid_resobj_mapping[thisCom.results[i].id] = thisCom.results[i];
+                    }
+
                 },
                 // 请求失败，包含具体的错误信息
                 error : function(e){
@@ -175,68 +247,19 @@ export default {
                 }
             });
 
-            let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
-
-            ws.onopen = function(evt) {
-                console.log("WS connection open ...");
-                if (!thisCom.results) {
-                    // 如果ajax还没返回就再等等
-                    setTimeout(ws.onopen, 250);
-                    return;
-                }
-                if (thisCom.$route.params.hasOwnProperty("submission_id")) {
-                    let post_data = {
-                        type: "detail",
-                        submission_id: thisCom.$route.params.submission_id,
-                    };
-                    ws.send(JSON.stringify(post_data));
-                    console.log('send : ' + JSON.stringify(post_data));
-                }
-                for (let res of thisCom.results) {
-                    if (res.verdict === "PENDING") {
-                        let post_data = {
-                            type: "detail",
-                            submission_id: res.id,
-                        };
-                        ws.send(JSON.stringify(post_data));
-                        console.log('send : ' + JSON.stringify(post_data));
-                    }
-                }
-            };
-
-            ws.onmessage = function(evt) {
-                console.log( "WS received Message: " + evt.data);
-                let recv_data = JSON.parse(evt.data);
-                if (recv_data.hasOwnProperty("id")) {
-                    // 遍历20个项……应该还好吧（？
-                    for (let i = 0; i < thisCom.results.length; ++i) {
-                        if (thisCom.results[i].id === recv_data.id) {
-                            thisCom.$set(thisCom.results[i], "verdict", recv_data.verdict);
-                            thisCom.$set(thisCom.results[i], "time", recv_data.time);
-                            thisCom.$set(thisCom.results[i], "memory", recv_data.memory);
-                            break;
-                        }
-                    }
-                }
-            };
-
-            ws.onclose = function(evt) {
-                console.log("WS connection closed.");
-            };
         },
     },
 
     beforeMount() {
-        let thisCom = this;
-        let page_num = 1;
 
+        let page_num = 1;
         if (this.page) {
             this.getSubmissionPage(this.submission_id);
-        }
-        else if (this.$route.query.page) {
+        } else if (this.$route.query.page) {
             this.getSubmissionPage(this.$route.query.submission_id);
+        } else {
+            this.getSubmissionPage(page_num);
         }
-        this.getSubmissionPage(page_num);
     },
 
     beforeRouteUpdate(to, from, next) {
@@ -247,6 +270,11 @@ export default {
         }
         this.getSubmissionPage(page_num);
 
+        next();
+    },
+
+    beforeRouteLeave(to, from, next) {
+        this.ws.close();
         next();
     }
 
