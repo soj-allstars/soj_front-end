@@ -93,11 +93,9 @@
                 let code = '';
                 if (thisCom.file_code) {
                     code = thisCom.file_code;
-                    console.log("code_file:\n" + code);
                 }
                 else if (thisCom.code) {
                     code = thisCom.code;
-                    console.log("code_text:\n" + code);
                 }
                 else {
                     alert('code is empty!');
@@ -108,11 +106,6 @@
                     alert('plz select language');
                     return;
                 }
-                
-                console.log("pid:\n" + thisCom.pid);
-                console.log("code:\n" + code);
-                console.log("lang:\n" + thisCom.selected_lang)
-
                 
                 $.ajax({
                     //请求方式
@@ -129,9 +122,6 @@
                     //请求成功
                     success : function(result) {
                         submission_id = result.submission_id;
-                        console.log('==============');
-                        console.log(submission_id);
-                        console.log(this.data.pid);
                         thisCom.$router.push({
                             name: 'normalSubmitRes',
                             params: {
@@ -141,8 +131,8 @@
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e){
-                      console.log(e.status);
-                      console.log(e.responseText);
+                      console.error(e.status);
+                      console.error(e.responseText);
                       alert(e.responseText);
                     },
                     

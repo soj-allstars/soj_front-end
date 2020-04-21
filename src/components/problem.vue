@@ -113,7 +113,10 @@
                                 </div>
                             </v-card>
                         </template>
-
+                    </v-card-text>
+                    <v-card-text class='body-1 grey--text text--darken-4 pt-0'>
+                        <h4>Note:</h4><br />
+                        <div v-html="rendered_note"></div>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -160,6 +163,9 @@
                                 throwOnError: true,
                                 // disable displayMode
                                 displayMode: false,
+                                delimiters: [
+                                    { left: "$", right: "$", display: false }
+                                ],
                                 // change errorColor to blue
                                 errorColor: '#1500ff',
                             }),
@@ -167,6 +173,25 @@
                     }
                 );
                 return converter.makeHtml(this.description);
+            },
+            rendered_note: function () {
+                let converter = new sd.Converter({
+                        extensions: [
+                            sdk({
+                                // maybe you want katex to throwOnError
+                                throwOnError: true,
+                                // disable displayMode
+                                displayMode: false,
+                                delimiters: [
+                                    { left: "$", right: "$", display: false }
+                                ],
+                                // change errorColor to blue
+                                errorColor: '#1500ff',
+                            }),
+                        ],
+                    }
+                );
+                return converter.makeHtml(this.note);
             }
         },
         methods: {
@@ -189,8 +214,10 @@
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
+                        /* eslint-enable no-console */
                     }
                 });
             },
@@ -203,10 +230,6 @@
                 if (document.execCommand('copy')) {
                     document.execCommand('copy');
                     this.snackbar = true;
-                    console.log('复制成功');
-                }
-                else {
-                    console.log('复制失败');
                 }
 
 

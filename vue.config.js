@@ -12,7 +12,8 @@ module.exports = {
               'window.jQuery': 'jquery',
               Popper: ['popper.js', 'default']
           })
-      ]
+      ],
+	  devtool: 'source-map',
   },
   assetsDir: './static',
 }

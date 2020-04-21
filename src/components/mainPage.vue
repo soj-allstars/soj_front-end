@@ -31,8 +31,8 @@
                       </v-btn>
                   </template>
                   <v-card>
-                      <v-card-title class="headline">LOG OUT</v-card-title>
-                      <v-card-text>Do you really want to log out?</v-card-text>
+                      <v-card-title class="headline">注销</v-card-title>
+                      <v-card-text>是否真的要注销?</v-card-text>
                       <v-card-actions>
                           <v-spacer></v-spacer>
                           <v-btn
@@ -40,7 +40,7 @@
                                   text
                                   @click="show_logout_menu = false"
                           >
-                              CANCEL
+                              否
                           </v-btn>
 
                           <v-btn
@@ -48,12 +48,11 @@
                                   text
                                   @click="mylogout()"
                           >
-                              LOG OUT
+                              是
                           </v-btn>
                       </v-card-actions>
                   </v-card>
               </v-menu>
-              <v-btn text lnkk :to="{ name: 'addProblem' }">加题</v-btn>
           </v-toolbar-items>
         </v-app-bar>
         
@@ -64,7 +63,7 @@
 		  app
 		>
 		  <v-list dense>
-		    <v-list-item @click.stop="left = !left">
+		    <v-list-item>
 		      <v-list-item-action>
 		        <v-icon>mdi-account-circle</v-icon>
 		      </v-list-item-action>
@@ -75,15 +74,6 @@
 		        <v-list-item-title>登录</v-list-item-title>
 		      </v-list-item-content>
 		    </v-list-item>
-
-            <v-list-item @click.stop="left = !left">
-              <v-list-item-action>
-                <v-icon>mdi-exit-to-app</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title><a href="http://47.106.140.231/">http://47.106.140.231/</a></v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
 		  </v-list>
 		</v-navigation-drawer>
         
@@ -135,19 +125,17 @@
                         router.go(0);
                     },
                     error: function(e) {
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        console.error(e.status);
+                        console.error(e.responseText);
                     },
                 });
             },
             corss_domain_setup: function() {
                 // 用于跨域
                 let csrftoken = this.getCookie('csrftoken');
-                console.log("csrftoken:\n" + csrftoken);
 
                 $.ajaxSetup({
                     beforeSend: function(xhr, settings) {
-                        console.log(settings.type);
                         // && !this.crossDomain
                         if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
                             xhr.setRequestHeader("X-CSRFToken", csrftoken);
@@ -167,13 +155,12 @@
                     url: thisCom.serveUrl() + "/api/global-info/",
 
                     success: function(result) {
-                        console.log(result);
                         thisCom.is_signed_in = result.is_signed_in;
                         thisCom.username = result.username;
                     },
                     error: function(e) {
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        console.error(e.status);
+                        console.error(e.responseText);
                     },
                 });
             }

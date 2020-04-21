@@ -79,7 +79,7 @@
                                                     </v-icon>
                                                 </v-btn>
                                             </template>
-                                            <span>unregister the contest</span>
+                                            <span>退出比赛</span>
                                         </v-tooltip>
 
                                     </div>
@@ -101,7 +101,7 @@
                               max-width="500px"
                     >
                         <v-card v-if="clicked_ctst.category === 'PRIVATE' ">
-                            <v-card-title class="headline">VERIFY</v-card-title>
+                            <v-card-title class="headline">验证</v-card-title>
                             <v-card-text>
                                 <v-text-field
                                         v-model="ctst_psw"
@@ -118,7 +118,7 @@
                                         text
                                         @click="show_check_enter_dialog = false"
                                 >
-                                    CANCEL
+                                    取消
                                 </v-btn>
                                 <v-btn
                                         color="blue darken-2"
@@ -127,15 +127,15 @@
                                                 {password: ctst_psw}
                                                 )"
                                 >
-                                    ENTER
+                                    进入
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
 
 
                         <v-card v-if="clicked_ctst.category === 'REGISTER' ">
-                            <v-card-title class="headline">REGISTER</v-card-title>
-                            <v-card-text>Do you want to register this contest?</v-card-text>
+                            <v-card-title class="headline">参加比赛</v-card-title>
+                            <v-card-text>你确定要参加这个比赛吗?</v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn
@@ -143,7 +143,7 @@
                                         text
                                         @click="show_check_enter_dialog = false"
                                 >
-                                    CANCEL
+                                    取消
                                 </v-btn>
                                 <v-btn
                                         color="blue darken-2"
@@ -152,7 +152,7 @@
                                                 { contest_id: clicked_ctst.id }
                                                 )"
                                 >
-                                    REGISTER
+                                    确定参加
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
@@ -163,8 +163,8 @@
                               max-width="500px"
                     >
                         <v-card>
-                            <v-card-title class="headline">UNREGISTER</v-card-title>
-                            <v-card-text>Do you want to unregister this contest?</v-card-text>
+                            <v-card-title class="headline">退出比赛</v-card-title>
+                            <v-card-text>你确定要退出这个比赛吗?</v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn
@@ -172,7 +172,7 @@
                                         text
                                         @click="show_unregister_dialog = false"
                                 >
-                                    CANCEL
+                                    取消
                                 </v-btn>
 
                                 <v-btn
@@ -182,7 +182,7 @@
                                             { contest_id: clicked_ctst.id },
                                             false)"
                                 >
-                                    UNREGISTER
+                                    确定退出
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
@@ -361,7 +361,6 @@
                         thisCom.prev = result.previous;
                         thisCom.next = result.next;
                         thisCom.contests = result.results;
-                        console.log(JSON.stringify(result.results));
                         thisCom.nowTime = new Date();
 
                         // 给每条比赛项目算出所需要的属性
@@ -378,9 +377,11 @@
                     },
                     // 请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
                         alert(e.responseText);
+                        /* eslint-enable no-console */
                     }
                 });
             },
@@ -423,9 +424,11 @@
                     },
                     // 请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
                         alert(e.responseText);
+                        /* eslint-enable no-console */
                     }
                 });
             },
