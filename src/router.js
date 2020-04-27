@@ -33,6 +33,7 @@ const liveResQuery = () => import("@/components/liveResQuery");
 const normalSubmitRes = () => import("@/components/normalSubmitRes");
 
 const routes = {
+    mode: 'history',
     routes: [
         {
             path: '/',
