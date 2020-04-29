@@ -119,9 +119,10 @@ export default {
             next: null,
             results: null,
             res_id: null,
-            // submission的websocket
+
+            // websocket of submission
             ws: null,
-            resid_resobj_mapping: {},
+            resid_resobj_mapping: new Map(),
 
             // 一页的提交数，需要和后端协调，目前定为20
             page_length: 20,
@@ -153,8 +154,8 @@ export default {
 
         getSubmissionPage: function (page_num) {
             let thisCom = this;
-
-            if (!this.ws) {
+            let ws = null;
+            if (!thisCom.ws) {
                 let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
                 ws.onopen = function (evt) {
                     console.log("problemsubmitres ws connection open ...");
@@ -187,13 +188,18 @@ export default {
 
                     let recv_data = JSON.parse(evt.data);
                     if (recv_data.hasOwnProperty("id")) {
-                        if (thisCom.resid_resobj_mapping.hasOwnProperty(recv_data.id)) {
-                            let res = this.resid_resobj_mapping[recv_data.id];
+                        console.log("recv has id property");
+                        if (thisCom.resid_resobj_mapping.has(recv_data.id)) {
+                            let res = thisCom.resid_resobj_mapping.get(recv_data.id);
                             thisCom.$set(res, "verdict", recv_data.verdict);
                             thisCom.$set(res, "time", recv_data.time);
                             thisCom.$set(res, "memory", recv_data.memory);
 
                             console.log("edited");
+                        }
+                        else {
+                            console.log("can not find id in mapping");
+                            console.table(thisCom.resid_resobj_mapping);
                         }
 
                         // 遍历方法，蠢毙了
@@ -210,9 +216,9 @@ export default {
                 ws.onclose = function (evt) {
                     console.log("this.ws connection closed.");
                 };
-
-                this.ws = ws;
             }
+            thisCom.ws = ws;
+
             
             $.ajax({
                 // 请求方式
@@ -225,17 +231,20 @@ export default {
                 },
                 // 请求成功
                 success : function(result) {
-                    console.log(thisCom.request_url);
+                    // console.log(thisCom.request_url);
                     thisCom.submission_count = result.count;
                     thisCom.next = result.next;
                     thisCom.previous = result.previous;
                     thisCom.results = result.results;
 
+                    console.table(thisCom.results);
+
                     // results[x].id到result[x]的mapping
-                    thisCom.resid_resobj_mapping = {};
+                    thisCom.resid_resobj_mapping.clear();
 
                     for (let i = 0; i < thisCom.results.length; ++i) {
-                        thisCom.resid_resobj_mapping[thisCom.results[i].id] = thisCom.results[i];
+                        // 一定要用这个方式，否则则是看做Object添加属性了
+                        thisCom.resid_resobj_mapping.set(thisCom.results[i].id, thisCom.results[i]);
                     }
 
                 },
@@ -251,7 +260,6 @@ export default {
     },
 
     beforeMount() {
-
         let page_num = 1;
         if (this.page) {
             this.getSubmissionPage(this.submission_id);
@@ -260,6 +268,17 @@ export default {
         } else {
             this.getSubmissionPage(page_num);
         }
+    },
+
+    beforeDestroy() {
+        if (this.ws) {
+            this.ws.close();
+            console.log("ws closed");
+        }
+        else {
+            console.log("no ws");
+        }
+        debugger;
     },
 
     beforeRouteUpdate(to, from, next) {
@@ -272,11 +291,6 @@ export default {
 
         next();
     },
-
-    beforeRouteLeave(to, from, next) {
-        this.ws.close();
-        next();
-    }
 
 }
 </script>

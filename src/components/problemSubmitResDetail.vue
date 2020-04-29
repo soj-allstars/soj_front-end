@@ -36,7 +36,7 @@
                                             <v-row>
                                                 <v-col>
                                                     <v-icon class="mr-2">mdi-flag</v-icon>
-                                                    <span class="text--secondary">{{lang}}</span>
+                                                    <span class="text--secondary">{{language_long_name[lang]}}</span>
                                                 </v-col>
                                             </v-row>
                                         </div>
@@ -72,6 +72,7 @@
 
 <script>
     import hljs from 'highlight.js';
+    import { language_long_name, language_formal_name } from '../lib/lang_common'
 
     export default {
         name: "problemSubmitResDetail",
@@ -86,16 +87,9 @@
                 lang: '',
                 desc: null,
 
+                language_long_name: language_long_name,
+                language_formal_name: language_formal_name,
 
-                language_formal_name: {
-                    "GXX": "c++",
-                    "GCC": "c",
-                    "JAVA": "java",
-                    "CPY": "python",
-                    "PYPY": "python",
-                    "GO": "go",
-                    "JS": "javascript",
-                },
             }
         },
         computed: {

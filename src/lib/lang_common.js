@@ -28,6 +28,17 @@ const language_long_name = {
     "PYPY": "Python 3.6 (PyPy 7.3.1)",
 };
 
+// 用于代码高亮
+const language_formal_name = {
+        "GXX": "c++",
+        "GCC": "c",
+        "JAVA": "java",
+        "CPY": "python",
+        "PYPY": "python",
+        "GO": "go",
+        "JS": "javascript",
+};
+
 const verdict_long_name = {
     "AC": "Accepted",
     "WA": "Wrong Answer",
@@ -56,6 +67,7 @@ const verdict_font_color = {
 export {
     lang_backend_mapping,
     language_long_name,
+    language_formal_name,
     verdict_long_name,
     verdict_font_color,
 }
