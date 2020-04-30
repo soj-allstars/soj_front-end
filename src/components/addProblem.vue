@@ -398,6 +398,9 @@
                 languages : lang_backend_mapping,
                 selected_lang: '',
 
+                // websocket
+                ws: null,
+
                 // return
                 problem_id: 0,
                 problem_id_from_backend: -1,
@@ -623,46 +626,52 @@
                 this.sp_checker_received = false;
                 this.error_desc = "";
 
-                let ws = new WebSocket("ws://" + location.hostname + "/ws/problem/check/");
+                let ws = null;
+                if (!this.ws) {
+                    ws = new WebSocket("ws://" + location.hostname + "/ws/problem/check/");
 
-                ws.onopen = function(evt) {
-                    console.log("Connection open ...");
-                    ws.send('{"problem_id":' + pid + '}');
-                    setTimeout(function(ws_p, this_p) {
-                        if (!this_p.ok_received){
-                            ws_p.close();
+                    ws.onopen = function(evt) {
+                        console.log("Connection open ...");
+                        ws.send('{"problem_id":' + pid + '}');
+                        setTimeout(function(ws_p, this_p) {
+                            if (!this_p.ok_received){
+                                ws_p.close();
+                            }
+                        },180000, ws, thisCom);
+                    };
+
+                    ws.onmessage = function(evt) {
+                        console.log( "Received Message: " + evt.data);
+                        let recv_data = JSON.parse(evt.data);
+
+                        if (recv_data.hasOwnProperty("ok")) {
+                            thisCom.ok_received = true;
+                            if (!recv_data.ok) {
+                                thisCom.error_desc = recv_data.detail;
+                            }
+                        } else if (recv_data.hasOwnProperty("solution")) {
+                            thisCom.solution_received = true;
+                            thisCom.verdict = recv_data.solution.verdict;
+                            thisCom.time_usage = recv_data.solution.time_used;
+                            thisCom.memory_usage = recv_data.solution.memory_used;
+                            thisCom.desc = recv_data.solution.desc;
+                            if (recv_data.hasOwnProperty("checker")) {
+                                thisCom.sp_checker_received = true;
+                                thisCom.sp_checker_verdict = recv_data.checker.verdict;
+                                thisCom.sp_checker_time_usage = recv_data.checker.time_used;
+                                thisCom.sp_checker_memory_usage = recv_data.checker.memory_used;
+                            }
                         }
-                    },180000, ws, thisCom);
-                };
+                        // ws.close();
+                    };
 
-                ws.onmessage = function(evt) {
-                    console.log( "Received Message: " + evt.data);
-                    let recv_data = JSON.parse(evt.data);
+                    ws.onclose = function(evt) {
+                        console.log("Connection closed.");
+                    };
 
-                    if (recv_data.hasOwnProperty("ok")) {
-                        thisCom.ok_received = true;
-                        if (!recv_data.ok) {
-                            thisCom.error_desc = recv_data.detail;
-                        }
-                    } else if (recv_data.hasOwnProperty("solution")) {
-                        thisCom.solution_received = true;
-                        thisCom.verdict = recv_data.solution.verdict;
-                        thisCom.time_usage = recv_data.solution.time_used;
-                        thisCom.memory_usage = recv_data.solution.memory_used;
-                        thisCom.desc = recv_data.solution.desc;
-                        if (recv_data.hasOwnProperty("checker")) {
-                            thisCom.sp_checker_received = true;
-                            thisCom.sp_checker_verdict = recv_data.checker.verdict;
-                            thisCom.sp_checker_time_usage = recv_data.checker.time_used;
-                            thisCom.sp_checker_memory_usage = recv_data.checker.memory_used;
-                        }
-                    }
-                    // ws.close();
-                };
+                    this.ws = ws;
+                }
 
-                ws.onclose = function(evt) {
-                    console.log("Connection closed.");
-                };
             },
 
             // for test
@@ -703,6 +712,12 @@
             //         console.log("Connection closed.");
             //     };
             // }
+        },
+
+        beforeDestroy() {
+            if (this.ws) {
+                this.ws.close();
+            }
         }
     }
 </script>

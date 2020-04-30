@@ -1,32 +1,24 @@
-const lang_backend_mapping = [
-    {
-        lang: "C++ (G++ 8.3.0 C++17)",
-        lang_id: "GXX"
-    },
-    {
-        lang: "C (GCC 8.3.0 C11)",
-        lang_id: "GCC"
-    },
-    {
-        lang: "Java 11 (OpenJDK 11.0.5)",
-        lang_id: "JAVA"
-    },
-    {
-        lang: "Python 3.8 (CPython)",
-        lang_id: "CPY"
-    },
-    {
-        lang: "Python 3.6 (PyPy 7.3.1)",
-        lang_id: "PYPY"
-    },
-];
 const language_long_name = {
-    "GXX": "C++ (G++ 8.3.0 C++17)",
-    "GCC": "C (GCC 8.3.0 C11)",
+    "GXX": "C++17 (G++ 8.3.0)",
+    "GCC": "C11 (GCC 8.3.0)",
     "JAVA": "Java 11 (OpenJDK 11.0.5)",
     "CPY": "Python 3.8 (CPython)",
     "PYPY": "Python 3.6 (PyPy 7.3.1)",
 };
+
+// todo: 生成
+const lang_backend_mapping = function () {
+    let ret = [];
+    for (let [key, value] of Object.entries(language_long_name)) {
+        let obj = {
+            lang: value,
+            lang_id: key,
+        };
+        ret.push(obj);
+    }
+    return ret;
+}();
+
 
 // 用于代码高亮
 const language_formal_name = {
@@ -35,8 +27,6 @@ const language_formal_name = {
         "JAVA": "java",
         "CPY": "python",
         "PYPY": "python",
-        "GO": "go",
-        "JS": "javascript",
 };
 
 const verdict_long_name = {

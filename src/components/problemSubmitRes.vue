@@ -27,13 +27,14 @@
                     <td class="text-left">
                         <v-btn  text block
                                 class="d-flex justify-start px-0"
-                                @click="show_detail(res.id)"
+                                :to="{ name: 'problemSubmitResDetail', query: { submission_id: res.id } }"
                                 >
                             {{res.id}}
                         </v-btn>
                     </td>
-                    <td class="text-left"
+                    <td class="text-left show_res_btn"
                         :class="verdict_color[res.verdict]"
+                        @click="show_detail(res.id)"
                     >
                         {{verdict_detail[res.verdict]}}
                     </td>
@@ -156,32 +157,51 @@ export default {
             let thisCom = this;
             let ws = null;
             if (!thisCom.ws) {
-                let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
+                ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
                 ws.onopen = function (evt) {
                     console.log("problemsubmitres ws connection open ...");
-                    // if (thisCom.$route.params.hasOwnProperty("submission_id")) {
-                    //     let post_data = {
-                    //         type: "detail",
-                    //         submission_id: thisCom.$route.params.submission_id,
-                    //     };
-                    //     this.ws.send(JSON.stringify(post_data));
-                    //     console.log('send : ' + JSON.stringify(post_data));
-                    // }
-                    // for (let res of thisCom.results) {
-                    //     if (res.verdict === "PENDING") {
-                    //         let post_data = {
-                    //             type: "detail",
-                    //             submission_id: res.id,
-                    //         };
-                    //         this.ws.send(JSON.stringify(post_data));
-                    //         console.log('send : ' + JSON.stringify(post_data));
-                    //     }
-                    // }
 
                     let post_data = {
                         type: "all"
                     };
                     ws.send(JSON.stringify(post_data));
+
+
+                    $.ajax({
+                        // 请求方式
+                        type : "GET",
+                        // 请求地址
+                        url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions/',
+                        // url : thisCom.serveUrl() + '/api/submissions' + '/',
+                        data : {
+                            page: page_num,
+                        },
+                        // 请求成功
+                        success : function(result) {
+                            // console.log(thisCom.request_url);
+                            thisCom.submission_count = result.count;
+                            thisCom.next = result.next;
+                            thisCom.previous = result.previous;
+                            thisCom.results = result.results;
+
+                            console.log(thisCom.results[0]);
+
+                            // results[x].id到result[x]的mapping
+                            thisCom.resid_resobj_mapping.clear();
+
+                            for (let i = 0; i < thisCom.results.length; ++i) {
+                                // 一定要用这个方式，否则则是看做Object添加属性了
+                                thisCom.resid_resobj_mapping.set(thisCom.results[i].id, thisCom.results[i]);
+                            }
+
+                        },
+                        // 请求失败，包含具体的错误信息
+                        error : function(e){
+                            console.log(e.status);
+                            console.log(e.responseText);
+                            alert(e.responseText);
+                        }
+                    });
                 };
                 ws.onmessage = function (evt) {
                     console.log("problemsubmitres this.ws received Message: " + evt.data);
@@ -216,46 +236,9 @@ export default {
                 ws.onclose = function (evt) {
                     console.log("this.ws connection closed.");
                 };
+
+                thisCom.ws = ws;
             }
-            thisCom.ws = ws;
-
-            
-            $.ajax({
-                // 请求方式
-                type : "GET",
-                // 请求地址
-                url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions/',
-                // url : thisCom.serveUrl() + '/api/submissions' + '/',
-                data : {
-                    page: page_num,
-                },
-                // 请求成功
-                success : function(result) {
-                    // console.log(thisCom.request_url);
-                    thisCom.submission_count = result.count;
-                    thisCom.next = result.next;
-                    thisCom.previous = result.previous;
-                    thisCom.results = result.results;
-
-                    console.table(thisCom.results);
-
-                    // results[x].id到result[x]的mapping
-                    thisCom.resid_resobj_mapping.clear();
-
-                    for (let i = 0; i < thisCom.results.length; ++i) {
-                        // 一定要用这个方式，否则则是看做Object添加属性了
-                        thisCom.resid_resobj_mapping.set(thisCom.results[i].id, thisCom.results[i]);
-                    }
-
-                },
-                // 请求失败，包含具体的错误信息
-                error : function(e){
-                    console.log(e.status);
-                    console.log(e.responseText);
-                    alert(e.responseText);
-                }
-            });
-
         },
     },
 
@@ -278,7 +261,6 @@ export default {
         else {
             console.log("no ws");
         }
-        debugger;
     },
 
     beforeRouteUpdate(to, from, next) {
@@ -294,3 +276,9 @@ export default {
 
 }
 </script>
+
+<style scoped>
+    .show_res_btn:hover {
+        cursor: pointer;
+    }
+</style>

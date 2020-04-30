@@ -31,8 +31,8 @@
                       </v-btn>
                   </template>
                   <v-card>
-                      <v-card-title class="headline">LOG OUT</v-card-title>
-                      <v-card-text>Do you really want to log out?</v-card-text>
+                      <v-card-title class="headline">注销</v-card-title>
+                      <v-card-text>是否真的要注销?</v-card-text>
                       <v-card-actions>
                           <v-spacer></v-spacer>
                           <v-btn
@@ -40,7 +40,7 @@
                                   text
                                   @click="show_logout_menu = false"
                           >
-                              CANCEL
+                              否
                           </v-btn>
 
                           <v-btn
@@ -48,12 +48,11 @@
                                   text
                                   @click="mylogout()"
                           >
-                              LOG OUT
+                              是
                           </v-btn>
                       </v-card-actions>
                   </v-card>
               </v-menu>
-              <v-btn text lnkk :to="{ name: 'addProblem' }">加题</v-btn>
           </v-toolbar-items>
         </v-app-bar>
         
