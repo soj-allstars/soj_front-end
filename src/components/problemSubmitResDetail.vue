@@ -89,7 +89,7 @@
 
                 language_long_name: language_long_name,
                 language_formal_name: language_formal_name,
-                ws: null,
+
             }
         },
         computed: {
@@ -101,91 +101,88 @@
         methods: {
             getSubmission: function(submission_id) {
                 let thisCom = this;
-                let ws = null;
-                if (!thisCom.ws) {
-                    let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
+                $.ajax({
+                    //请求方式
+                    type : "GET",
+                    //请求地址
+                    url : thisCom.serveUrl() + '/api/submission/' + submission_id + '/',
+                    //请求成功
+                    success : function(result) {
+                        // 因为是异步的，所以可能执行这个函数的时候，调用这个函数之后的代码段可能已经运行了
+                        thisCom.verdict = result.verdict;
+                        thisCom.memory_usage = result.memory;
+                        thisCom.time_usage = result.time;
+                        // 格式大概是 2020-02-16T07:53:12.550631+08:00
+                        thisCom.submit_time = result.submit_time;
+                        thisCom.code = result.code;
+                        thisCom.lang = result.lang;
+                        thisCom.desc = result.desc;
 
-                    ws.onopen = function(evt) {
-                        console.log("submitdetail WS connection open ...");
-                        let post_data = {
-                            type: "detail",
-                            submission_id: submission_id,
-                        };
-                        ws.send(JSON.stringify(post_data));
+                        if (result.verdict === "PENDING") {
+                            let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
 
+                            ws.onopen = function(evt) {
+                                console.log("WS connection open ...");
+                                let post_data = {
+                                    type: "detail",
+                                    submission_id: submission_id,
+                                };
+                                ws.send(JSON.stringify(post_data));
+                            };
 
-                        $.ajax({
-                            //请求方式
-                            type : "GET",
-                            //请求地址
-                            url : thisCom.serveUrl() + '/api/submission/' + submission_id + '/',
-                            //请求成功
-                            success : function(result) {
-                                // 因为是异步的，所以可能执行这个函数的时候，调用这个函数之后的代码段可能已经运行了
-                                thisCom.verdict = result.verdict;
-                                thisCom.memory_usage = result.memory;
-                                thisCom.time_usage = result.time;
-                                // 格式大概是 2020-02-16T07:53:12.550631+08:00
-                                thisCom.submit_time = result.submit_time;
-                                thisCom.code = result.code;
-                                thisCom.lang = result.lang;
-                                thisCom.desc = result.desc;
-
-                                thisCom.code = thisCom.code.replace(/[<>]/g, function (word) {
-                                    if (word === '<') {
-                                        return "&lt;";
-                                    }
-                                    else {
-                                        return "&gt;";
-                                    }
-                                });
-
-                                thisCom.submit_time = thisCom.submit_time.replace('T', ' ');
-                                thisCom.submit_time = thisCom.submit_time.replace(/\.\d+/, ' UTC');
-
-                                console.log('code:\n' + result.code);
-
-                                // thisCom.items[0].status = thisCom.verdict;
-                                // thisCom.items[0].memory_cost = thisCom.memory_usage;
-                                // thisCom.items[0].time_cost = thisCom.time_usage;
-                                // thisCom.items[0].submit_time = thisCom.submit_time;
-                                // thisCom.items[0].language = thisCom.lang;
-                            },
-                            //请求失败，包含具体的错误信息
-                            error : function(e, textStatus) {
-                                if (e.status == 403) {
-                                    thisCom.verdict = 'PENDING';
-                                    thisCom.memory_usage = 0;
-                                    thisCom.time_usage = 0;
-                                    thisCom.submit_time = null;
-                                    thisCom.code = '';
-                                    thisCom.lang = '';
-                                    thisCom.desc = 'you have no permission to check other\'s code';
-                                } else {
-                                    console.log(e.status);
-                                    console.log(e.responseText);
-                                    alert(e.responseText);
+                            ws.onmessage = function(evt) {
+                                console.log( "submitResDetail WS received Message: " + evt.data);
+                                let recv_data = JSON.parse(evt.data);
+                                if (recv_data.hasOwnProperty("id")) {
+                                    thisCom.verdict = recv_data.verdict;
+                                    thisCom.memory_usage = recv_data.memory;
+                                    thisCom.time_usage = recv_data.time;
                                 }
+                            };
+
+                            ws.onclose = function(evt) {
+                                console.log("WS connection closed.");
+                            };
+                        }
+
+                        thisCom.code = thisCom.code.replace(/[<>]/g, function (word) {
+                            if (word === '<') {
+                                return "&lt;";
+                            }
+                            else {
+                                return "&gt;";
                             }
                         });
-                    };
 
-                    ws.onmessage = function(evt) {
-                        console.log( "submitResDetail WS received Message: " + evt.data);
-                        let recv_data = JSON.parse(evt.data);
-                        if (recv_data.hasOwnProperty("id")) {
-                            thisCom.verdict = recv_data.verdict;
-                            thisCom.memory_usage = recv_data.memory;
-                            thisCom.time_usage = recv_data.time;
+
+                        thisCom.submit_time = thisCom.submit_time.replace('T', ' ');
+                        thisCom.submit_time = thisCom.submit_time.replace(/\.\d+/, ' UTC');
+
+                        console.log('code:\n' + result.code);
+
+                        // thisCom.items[0].status = thisCom.verdict;
+                        // thisCom.items[0].memory_cost = thisCom.memory_usage;
+                        // thisCom.items[0].time_cost = thisCom.time_usage;
+                        // thisCom.items[0].submit_time = thisCom.submit_time;
+                        // thisCom.items[0].language = thisCom.lang;
+                    },
+                    //请求失败，包含具体的错误信息
+                    error : function(e, textStatus) {
+                        if (e.status == 403) {
+                            thisCom.verdict = 'PENDING';
+                            thisCom.memory_usage = 0;
+                            thisCom.time_usage = 0;
+                            thisCom.submit_time = null;
+                            thisCom.code = '';
+                            thisCom.lang = '';
+                            thisCom.desc = 'you have no permission to check other\'s code';
+                        } else {
+                            console.log(e.status);
+                            console.log(e.responseText);
+                            alert(e.responseText);
                         }
-                    };
-
-                    ws.onclose = function(evt) {
-                        console.log("detail WS connection closed.");
-                    };
-
-                    thisCom.ws = ws;
-                }
+                    }
+                });
             }
         },
 
@@ -213,16 +210,6 @@
             });
         },
 
-        beforeDestroy() {
-            if (this.ws) {
-                this.ws.close();
-                console.log("detail ws closed");
-            }
-            else {
-                console.log("no detail ws");
-            }
-        },
-
         beforeRouteUpdate (to, from, next) {
             // react to route changes...
             // don't forget to call next()
@@ -233,6 +220,10 @@
 </script>
 
 <style scoped>
+    code, kbd, pre, samp {
+        font-family: monospace, monospace !important;
+    }
+
     pre code::before {
         content: "" !important;
         letter-spacing: 0 !important;
