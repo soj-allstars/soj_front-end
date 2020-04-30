@@ -591,15 +591,16 @@
                     },
                     //请求成功
                     success : function(result) {
-                        console.log('==============');
                         thisCom.problem_id_from_backend = result.problem_id;
                         thisCom.problem_id = result.problem_id;
                         thisCom.problem_id_received = true;
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
+                        /* eslint-enable no-console */
                         alert(e.responseText);
                     },
                 });
@@ -631,7 +632,6 @@
                     ws = new WebSocket("ws://" + location.hostname + "/ws/problem/check/");
 
                     ws.onopen = function(evt) {
-                        console.log("Connection open ...");
                         ws.send('{"problem_id":' + pid + '}');
                         setTimeout(function(ws_p, this_p) {
                             if (!this_p.ok_received){
@@ -641,7 +641,6 @@
                     };
 
                     ws.onmessage = function(evt) {
-                        console.log( "Received Message: " + evt.data);
                         let recv_data = JSON.parse(evt.data);
 
                         if (recv_data.hasOwnProperty("ok")) {
@@ -665,9 +664,7 @@
                         // ws.close();
                     };
 
-                    ws.onclose = function(evt) {
-                        console.log("Connection closed.");
-                    };
+                    ws.onclose = function(evt) {};
 
                     this.ws = ws;
                 }
@@ -676,6 +673,7 @@
 
             // for test
             showres: function() {
+                /* eslint-disable no-console */
                 console.log("title: \n" + this.title);
                 console.log("description: \n" + this.description);
                 console.log("note: \n" + this.note);
@@ -693,25 +691,8 @@
                 console.log("solution file:\n" + this.solution_file);
                 console.log("solution text:\n"+ this.solution_text);
                 console.log("solution language: \n" + this.selected_lang);
+                /* eslint-enable no-console */
             },
-
-            // test_ws: function() {
-            //     var ws = new WebSocket("ws://" + location.hostname + "/ws/problem/check/");
-            //
-            //     ws.onopen = function(evt) {
-            //         console.log("Connection open ...");
-            //         ws.send("Hello WebSockets!");
-            //     };
-            //
-            //     ws.onmessage = function(evt) {
-            //         console.log( "Received Message: " + evt.data);
-            //         ws.close();
-            //     };
-            //
-            //     ws.onclose = function(evt) {
-            //         console.log("Connection closed.");
-            //     };
-            // }
         },
 
         beforeDestroy() {

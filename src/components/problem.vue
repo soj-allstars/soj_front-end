@@ -214,8 +214,10 @@
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
+                        /* eslint-enable no-console */
                     }
                 });
             },
@@ -228,10 +230,6 @@
                 if (document.execCommand('copy')) {
                     document.execCommand('copy');
                     this.snackbar = true;
-                    console.log('复制成功');
-                }
-                else {
-                    console.log('复制失败');
                 }
 
 

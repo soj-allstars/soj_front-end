@@ -159,6 +159,7 @@ export default {
             if (!thisCom.ws) {
                 ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
                 ws.onopen = function (evt) {
+                    /* eslint-disable no-console */
                     console.log("problemsubmitres ws connection open ...");
 
                     let post_data = {
@@ -184,8 +185,6 @@ export default {
                             thisCom.previous = result.previous;
                             thisCom.results = result.results;
 
-                            console.log(thisCom.results[0]);
-
                             // results[x].id到result[x]的mapping
                             thisCom.resid_resobj_mapping.clear();
 
@@ -197,8 +196,8 @@ export default {
                         },
                         // 请求失败，包含具体的错误信息
                         error : function(e){
-                            console.log(e.status);
-                            console.log(e.responseText);
+                            console.error(e.status);
+                            console.error(e.responseText);
                             alert(e.responseText);
                         }
                     });
@@ -208,18 +207,11 @@ export default {
 
                     let recv_data = JSON.parse(evt.data);
                     if (recv_data.hasOwnProperty("id")) {
-                        console.log("recv has id property");
                         if (thisCom.resid_resobj_mapping.has(recv_data.id)) {
                             let res = thisCom.resid_resobj_mapping.get(recv_data.id);
                             thisCom.$set(res, "verdict", recv_data.verdict);
                             thisCom.$set(res, "time", recv_data.time);
                             thisCom.$set(res, "memory", recv_data.memory);
-
-                            console.log("edited");
-                        }
-                        else {
-                            console.log("can not find id in mapping");
-                            console.table(thisCom.resid_resobj_mapping);
                         }
 
                         // 遍历方法，蠢毙了
@@ -235,6 +227,7 @@ export default {
                 };
                 ws.onclose = function (evt) {
                     console.log("this.ws connection closed.");
+                    /* eslint-enable no-console */
                 };
 
                 thisCom.ws = ws;
@@ -256,10 +249,6 @@ export default {
     beforeDestroy() {
         if (this.ws) {
             this.ws.close();
-            console.log("ws closed");
-        }
-        else {
-            console.log("no ws");
         }
     },
 

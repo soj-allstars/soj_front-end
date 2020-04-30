@@ -84,8 +84,10 @@
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
+                        /* eslint-enable no-console */
                         alert(e.responseText);
                     }
                 });

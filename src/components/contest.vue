@@ -414,13 +414,10 @@
                     thisCom.ws = new WebSocket("ws://" + location.hostname + "/ws/contest/standings/");
 
                     thisCom.ws.onopen = function(evt) {
-                        console.log("WS connection open ...");
                         thisCom.ws.send('{"contest_id":' + thisCom.cid + '}');
-                        console.log('contest_id: ' + thisCom.cid);
                     };
 
                     thisCom.ws.onmessage = function(evt) {
-                        console.log( "stadings WS received Message: " + evt.data);
                         let recv_data = JSON.parse(evt.data);
 
                         if (recv_data.ok) {
@@ -432,13 +429,14 @@
                     };
 
                     thisCom.ws.onclose = function(evt) {
-                        console.log("WS connection closed.");
                     };
                 },
                 // 请求失败，包含具体的错误信息
                 error : function(e){
-                    console.log(e.status);
-                    console.log(e.responseText);
+                    /* eslint-disable no-console */
+                    console.error(e.status);
+                    console.error(e.responseText);
+                    /* eslint-enable no-console */
                 }
             });
         },

@@ -122,6 +122,7 @@
                             let ws = new WebSocket("ws://" + location.hostname + "/ws/submission/");
 
                             ws.onopen = function(evt) {
+                                /* eslint-disable no-console */
                                 console.log("WS connection open ...");
                                 let post_data = {
                                     type: "detail",
@@ -143,6 +144,7 @@
                             ws.onclose = function(evt) {
                                 console.log("WS connection closed.");
                             };
+                            /* eslint-enable no-console */
                         }
 
                         thisCom.code = thisCom.code.replace(/[<>]/g, function (word) {
@@ -157,14 +159,6 @@
 
                         thisCom.submit_time = thisCom.submit_time.replace('T', ' ');
                         thisCom.submit_time = thisCom.submit_time.replace(/\.\d+/, ' UTC');
-
-                        console.log('code:\n' + result.code);
-
-                        // thisCom.items[0].status = thisCom.verdict;
-                        // thisCom.items[0].memory_cost = thisCom.memory_usage;
-                        // thisCom.items[0].time_cost = thisCom.time_usage;
-                        // thisCom.items[0].submit_time = thisCom.submit_time;
-                        // thisCom.items[0].language = thisCom.lang;
                     },
                     //请求失败，包含具体的错误信息
                     error : function(e, textStatus) {
@@ -177,8 +171,8 @@
                             thisCom.lang = '';
                             thisCom.desc = 'you have no permission to check other\'s code';
                         } else {
-                            console.log(e.status);
-                            console.log(e.responseText);
+                            console.error(e.status);
+                            console.error(e.responseText);
                             alert(e.responseText);
                         }
                     }

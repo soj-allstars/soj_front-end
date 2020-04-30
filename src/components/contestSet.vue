@@ -361,7 +361,6 @@
                         thisCom.prev = result.previous;
                         thisCom.next = result.next;
                         thisCom.contests = result.results;
-                        console.log(JSON.stringify(result.results));
                         thisCom.nowTime = new Date();
 
                         // 给每条比赛项目算出所需要的属性
@@ -378,9 +377,11 @@
                     },
                     // 请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
                         alert(e.responseText);
+                        /* eslint-enable no-console */
                     }
                 });
             },
@@ -423,9 +424,11 @@
                     },
                     // 请求失败，包含具体的错误信息
                     error : function(e){
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        /* eslint-disable no-console */
+                        console.error(e.status);
+                        console.error(e.responseText);
                         alert(e.responseText);
+                        /* eslint-enable no-console */
                     }
                 });
             },

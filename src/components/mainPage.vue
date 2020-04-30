@@ -125,19 +125,17 @@
                         router.go(0);
                     },
                     error: function(e) {
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        console.error(e.status);
+                        console.error(e.responseText);
                     },
                 });
             },
             corss_domain_setup: function() {
                 // 用于跨域
                 let csrftoken = this.getCookie('csrftoken');
-                console.log("csrftoken:\n" + csrftoken);
 
                 $.ajaxSetup({
                     beforeSend: function(xhr, settings) {
-                        console.log(settings.type);
                         // && !this.crossDomain
                         if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) ) {
                             xhr.setRequestHeader("X-CSRFToken", csrftoken);
@@ -157,13 +155,12 @@
                     url: thisCom.serveUrl() + "/api/global-info/",
 
                     success: function(result) {
-                        console.log(result);
                         thisCom.is_signed_in = result.is_signed_in;
                         thisCom.username = result.username;
                     },
                     error: function(e) {
-                        console.log(e.status);
-                        console.log(e.responseText);
+                        console.error(e.status);
+                        console.error(e.responseText);
                     },
                 });
             }
