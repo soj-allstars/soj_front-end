@@ -49,7 +49,7 @@
                                 <div class="d-flex justify-start grey lighten-4"
                                 >
 <!--                                    <pre><code class="pa-12" v-html="code"></code></pre>-->
-                                        <pre class="pa-5 caption grey lighten-4"
+                                        <pre class="pa-5 grey lighten-4"
                                              :class="language_formal_name[lang]"
                                              v-html="code"></pre>
                                 </div>
@@ -222,6 +222,7 @@
 <style scoped>
     code, kbd, pre, samp {
         font-family: monospace, monospace !important;
+        font-size: .75rem !important;
     }
 
     pre code::before {
