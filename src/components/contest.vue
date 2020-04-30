@@ -245,7 +245,7 @@
                                 </v-tab-item>
                                 <v-tab-item>
                                     <v-card outlined>
-                                        reserved for comment ( or nothing )
+                                        under development
                                     </v-card>
                                 </v-tab-item>
                             </v-tabs-items>

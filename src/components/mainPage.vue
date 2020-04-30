@@ -63,7 +63,7 @@
 		  app
 		>
 		  <v-list dense>
-		    <v-list-item @click.stop="left = !left">
+		    <v-list-item>
 		      <v-list-item-action>
 		        <v-icon>mdi-account-circle</v-icon>
 		      </v-list-item-action>
@@ -74,15 +74,6 @@
 		        <v-list-item-title>登录</v-list-item-title>
 		      </v-list-item-content>
 		    </v-list-item>
-
-            <v-list-item @click.stop="left = !left">
-              <v-list-item-action>
-                <v-icon>mdi-exit-to-app</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title><a href="http://47.106.140.231/">http://47.106.140.231/</a></v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
 		  </v-list>
 		</v-navigation-drawer>
         

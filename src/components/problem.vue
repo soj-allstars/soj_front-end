@@ -114,7 +114,8 @@
                             </v-card>
                         </template>
                     </v-card-text>
-                    <v-card-text class='body-1 grey--text text--darken-4 pt-8'>
+                    <v-card-text class='body-1 grey--text text--darken-4 pt-0'>
+                        <h4>Note:</h4><br />
                         <div v-html="rendered_note"></div>
                     </v-card-text>
                 </v-card>

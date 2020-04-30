@@ -36,7 +36,7 @@ const routes = {
                     component: problemSubmit,
                 },
                 {
-                    path: '/normalrubmitres',
+                    path: '/normalsubmitres',
                     name: 'normalSubmitRes',
                     component: normalSubmitRes,
                 },
