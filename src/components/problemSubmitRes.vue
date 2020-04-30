@@ -124,6 +124,8 @@ export default {
             // websocket of submission
             ws: null,
             resid_resobj_mapping: new Map(),
+            // mapping of ws
+            ws_resid_resobj_mapping: new Map(),
 
             // 一页的提交数，需要和后端协调，目前定为20
             page_length: 20,
@@ -162,9 +164,20 @@ export default {
                     /* eslint-disable no-console */
                     console.log("problemsubmitres ws connection open ...");
 
-                    let post_data = {
-                        type: "all"
-                    };
+                    let post_data = null;
+
+                    if (thisCom.contest_mode) {
+                        post_data = {
+                            type: "contest",
+                            contest_id: thisCom.cid,
+                        };
+                    }
+                    else {
+                        post_data = {
+                            type: "all"
+                        };
+                    }
+
                     ws.send(JSON.stringify(post_data));
 
 
@@ -191,6 +204,13 @@ export default {
                             for (let i = 0; i < thisCom.results.length; ++i) {
                                 // 一定要用这个方式，否则则是看做Object添加属性了
                                 thisCom.resid_resobj_mapping.set(thisCom.results[i].id, thisCom.results[i]);
+                                if (thisCom.ws_resid_resobj_mapping.has(thisCom.results[i].id)) {
+                                    let res = thisCom.ws_resid_resobj_mapping.get(thisCom.results[i].id);
+                                    let target = thisCom.results[i];
+                                    thisCom.$set(target, "verdict", res.verdict);
+                                    thisCom.$set(target, "time", res.time);
+                                    thisCom.$set(target, "memory", res.memory);
+                                }
                             }
 
                         },
@@ -212,6 +232,8 @@ export default {
                             thisCom.$set(res, "verdict", recv_data.verdict);
                             thisCom.$set(res, "time", recv_data.time);
                             thisCom.$set(res, "memory", recv_data.memory);
+                        } else {
+                            thisCom.ws_resid_resobj_mapping.set(recv_data.id, recv_data);
                         }
 
                         // 遍历方法，蠢毙了
