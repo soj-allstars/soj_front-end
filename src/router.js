@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-// import mainPage from '@/components/mainPage'
+import mainPage from '@/components/mainPage'
 // import problem from '@/components/problem'
 // import problemSubmit from '@/components/problemSubmit'
 // import problemSubmitRes from '@/components/problemSubmitRes'

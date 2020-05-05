@@ -154,8 +154,52 @@ export default {
             this.show_res_detail = true;
             this.res_id = res_id;
         },
+		
+		getSubmissionPage: function (page_num) {
+			let thisCom = this;
+			$.ajax({
+				// 请求方式
+				type : "GET",
+				// 请求地址
+				url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions/',
+				// url : thisCom.serveUrl() + '/api/submissions' + '/',
+				data : {
+					page: page_num,
+				},
+				// 请求成功
+				success : function(result) {
+					// console.log(thisCom.request_url);
+					thisCom.submission_count = result.count;
+					thisCom.next = result.next;
+					thisCom.previous = result.previous;
+					thisCom.results = result.results;
 
-        getSubmissionPage: function (page_num) {
+					// results[x].id到result[x]的mapping
+					thisCom.resid_resobj_mapping.clear();
+
+					for (let i = 0; i < thisCom.results.length; ++i) {
+						// 一定要用这个方式，否则则是看做Object添加属性了
+						thisCom.resid_resobj_mapping.set(thisCom.results[i].id, thisCom.results[i]);
+						if (thisCom.ws_resid_resobj_mapping.has(thisCom.results[i].id)) {
+							let res = thisCom.ws_resid_resobj_mapping.get(thisCom.results[i].id);
+							let target = thisCom.results[i];
+							thisCom.$set(target, "verdict", res.verdict);
+							thisCom.$set(target, "time", res.time);
+							thisCom.$set(target, "memory", res.memory);
+						}
+					}
+
+				},
+				// 请求失败，包含具体的错误信息
+				error : function(e){
+					console.error(e.status);
+					console.error(e.responseText);
+					alert(e.responseText);
+				}
+			});
+		},
+
+        init: function (page_num) {
             let thisCom = this;
             let ws = null;
             if (!thisCom.ws) {
@@ -179,48 +223,8 @@ export default {
                     }
 
                     ws.send(JSON.stringify(post_data));
-
-
-                    $.ajax({
-                        // 请求方式
-                        type : "GET",
-                        // 请求地址
-                        url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions/',
-                        // url : thisCom.serveUrl() + '/api/submissions' + '/',
-                        data : {
-                            page: page_num,
-                        },
-                        // 请求成功
-                        success : function(result) {
-                            // console.log(thisCom.request_url);
-                            thisCom.submission_count = result.count;
-                            thisCom.next = result.next;
-                            thisCom.previous = result.previous;
-                            thisCom.results = result.results;
-
-                            // results[x].id到result[x]的mapping
-                            thisCom.resid_resobj_mapping.clear();
-
-                            for (let i = 0; i < thisCom.results.length; ++i) {
-                                // 一定要用这个方式，否则则是看做Object添加属性了
-                                thisCom.resid_resobj_mapping.set(thisCom.results[i].id, thisCom.results[i]);
-                                if (thisCom.ws_resid_resobj_mapping.has(thisCom.results[i].id)) {
-                                    let res = thisCom.ws_resid_resobj_mapping.get(thisCom.results[i].id);
-                                    let target = thisCom.results[i];
-                                    thisCom.$set(target, "verdict", res.verdict);
-                                    thisCom.$set(target, "time", res.time);
-                                    thisCom.$set(target, "memory", res.memory);
-                                }
-                            }
-
-                        },
-                        // 请求失败，包含具体的错误信息
-                        error : function(e){
-                            console.error(e.status);
-                            console.error(e.responseText);
-                            alert(e.responseText);
-                        }
-                    });
+					
+					this.getSubmissionPage(page_num);
                 };
                 ws.onmessage = function (evt) {
                     console.log("problemsubmitres this.ws received Message: " + evt.data);
@@ -264,7 +268,7 @@ export default {
         } else if (this.$route.query.page) {
             this.getSubmissionPage(this.$route.query.submission_id);
         } else {
-            this.getSubmissionPage(page_num);
+            this.init(page_num);
         }
     },
 
