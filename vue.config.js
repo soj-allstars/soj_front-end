@@ -21,6 +21,13 @@ module.exports = {
 			}),
 		],
 		devtool: 'source-map',
+		optimization: {
+			splitChunks: {
+				chunks: 'async',
+				minSize: 10000,
+				maxSize: 250000,
+			}
+		},
   },
   assetsDir: './static',
 }
