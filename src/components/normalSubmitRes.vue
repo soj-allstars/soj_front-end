@@ -16,6 +16,7 @@
                                 <problemSubmitRes
                                         :request_url=" this.serveUrl() + '/api/submissions' + '/' "
                                         :highlighted_id="$route.params.hlid"
+                                        :page="page_in_normal"
                                 ></problemSubmitRes>
                             </v-col>
                         </v-row>
@@ -31,6 +32,20 @@
     export default {
         components: {
             problemSubmitRes,
+        },
+
+        data: function() {
+            return {
+                page_in_normal: 1,
+            }
+        },
+
+        beforeRouteUpdate(to, from, next) {
+            let page_num = 1;
+            if (to.query.page) {
+                this.page_in_normal = parseInt(to.query.page);
+            }
+            next();
         },
     }
 </script>

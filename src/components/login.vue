@@ -28,7 +28,7 @@
                                             label="Password"
                                             @click:append="l_showpsw = !l_showpsw"
                                     ></v-text-field>
-                                    <v-checkbox v-model="l_keep" label="Remember me"></v-checkbox>
+                                    <v-checkbox v-model="l_keep" label="记住我"></v-checkbox>
                                 </v-card-text>
                                 <v-card-text class="pt-0">
                                     <a @click="show_login = false">没有账号? 注册</a>
