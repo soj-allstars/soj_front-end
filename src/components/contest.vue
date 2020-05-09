@@ -101,6 +101,11 @@
                                                                    :to="{ name: 'contestProblem', query: { pid: num_to_alpha(index), cid: cid } }"
                                                             >
                                                                 {{ p.title }}
+                                                                <span class="check_icon green--text lighten-2"
+                                                                      v-show="p.is_solved"
+                                                                ><v-icon>
+                                                                    mdi-check
+                                                                </v-icon></span>
                                                             </v-btn>
                                                         </td>
                                                     </tr>
@@ -466,5 +471,12 @@
     }
     .show_scroll {
         overflow: auto;
+    }
+
+    .check_icon {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
     }
 </style>
