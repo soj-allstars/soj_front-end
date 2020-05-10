@@ -88,6 +88,12 @@
                 languages : lang_backend_mapping,
             }
         },
+        watch: {
+            selected_lang: function() {
+                let thisCom = this;
+                localStorage.setItem('submit_lang', thisCom.selected_lang);
+            },
+        },
         methods: {
             submit_code: function() {
                 
@@ -168,6 +174,10 @@
         beforeMount: function () {
             this.pid = this.$route.query.pid;
             this.cid = this.$route.query.cid;
+            let last_lang = localStorage.getItem('submit_lang');
+            if (last_lang) {
+                this.selected_lang = last_lang;
+            }
         },
         
     }
