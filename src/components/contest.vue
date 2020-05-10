@@ -446,6 +446,17 @@
             });
         },
 
+        beforeRouteEnter (to, from, next) {
+            next(vm => {
+                // 通过 `vm` 访问组件实例
+                // 如果是刚提交完进入的话，就切换到提交的tab
+                if (from.name === "contestProblemSubmit") {
+                    // 代表提交的tab页面
+                    // 可以考虑优化成mapping以去除magic number
+                    vm.tabs = 1;
+                }
+            })
+        },
 
         // 只改变参数是不会使页面刷新的
         // 需要通过这个函数来执行参数更新的操作
@@ -453,7 +464,6 @@
             // react to route changes...
             // don't forget to call next()
             // 不允许通过这个来改变那个contest
-
             next();
         },
 
