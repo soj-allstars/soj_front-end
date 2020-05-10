@@ -28,7 +28,14 @@
                             </v-col>
                             <v-col class="pa-0 ma-0 row_height">
                                 <v-btn text block outlined tile height="50px" class="text-none"
-                                link :to="{ name:'problem', query: { pid: pbl.id } }">{{pbl.title}}</v-btn>
+                                link :to="{ name:'problem', query: { pid: pbl.id } }">
+                                    {{pbl.title}}
+                                    <span class="check_icon green--text lighten-2"
+                                          v-show="pbl.is_solved"
+                                    ><v-icon>
+                                        mdi-check
+                                    </v-icon></span>
+                                </v-btn>
                             </v-col>
                         </v-row>
                         <v-pagination :length="Math.ceil(problem_cnt / page_length)"
@@ -115,5 +122,12 @@
 <style scoped>
     .row_height {
         height: 50px;
+    }
+
+    .check_icon {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
     }
 </style>
