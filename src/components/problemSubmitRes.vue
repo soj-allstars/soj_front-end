@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import router from "../router";
 import problemSubmitResDetail from './problemSubmitResDetail';
 import { verdict_font_color, verdict_long_name, language_long_name} from "../lib/lang_common";
 export default {
@@ -285,7 +284,6 @@ export default {
     },
 
     beforeRouteUpdate(to, from, next) {
-        let thisCom = this;
         let page_num = 1;
         if (to.query.page) {
             page_num = to.query.page;

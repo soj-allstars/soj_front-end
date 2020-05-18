@@ -11,8 +11,7 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? ['error', { allow: ["warn", "error"] }] : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    "no-mixed-spaces-and-tabs": 0,
-    "vue/html-self-closing": "off", // Fix v-for/template/key bug
+    "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
   },
   parserOptions: {
     parser: 'babel-eslint'

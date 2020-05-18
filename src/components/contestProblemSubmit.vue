@@ -96,8 +96,6 @@
         },
         methods: {
             submit_code: function() {
-                
-                let submission_id = -1;
                 let thisCom = this;
                 let code = '';
                 if (thisCom.file_code) {
@@ -132,7 +130,6 @@
                     },
                     //请求成功
                     success : function(result) {
-                        submission_id = result.submission_id;
                         thisCom.$router.push({
                             name: 'contest',
                             query: {
