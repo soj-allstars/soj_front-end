@@ -27,7 +27,6 @@
 </template>
 
 <script>
-    import router from "../router";
     import problemSubmitRes from './problemSubmitRes';
     export default {
         components: {
@@ -41,7 +40,6 @@
         },
 
         beforeRouteUpdate(to, from, next) {
-            let page_num = 1;
             if (to.query.page) {
                 this.page_in_normal = parseInt(to.query.page);
             }

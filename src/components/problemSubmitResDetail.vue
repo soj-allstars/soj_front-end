@@ -189,7 +189,6 @@
         },
 
         created: function() {
-            let thisCom = this;
             if (this.submission_id) {
                 this.getSubmission(this.submission_id);
             }
