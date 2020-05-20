@@ -4,7 +4,6 @@ export default {
         Vue.prototype.serveUrl = function () {
             var currentBaseURL = location.protocol + "//" + location.hostname;
             return currentBaseURL;
-            // return 'http://localhost';
         };
         
         // getCookie转移到这里了
