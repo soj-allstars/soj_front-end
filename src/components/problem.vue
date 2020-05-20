@@ -114,7 +114,9 @@
                             </v-card>
                         </template>
                     </v-card-text>
-                    <v-card-text class='body-1 grey--text text--darken-4 pt-0'>
+                    <v-card-text class='body-1 grey--text text--darken-4 pt-0'
+                                 v-if="note"
+                    >
                         <h4>Note:</h4><br />
                         <div v-html="rendered_note"></div>
                     </v-card-text>
@@ -151,7 +153,7 @@
               description: "",
               sample_inputs: [],
               sample_outputs: [],
-              note: ''
+              note: '',
             }
         },
         computed: {
@@ -166,8 +168,6 @@
                                 delimiters: [
                                     { left: "$", right: "$", display: false }
                                 ],
-                                // change errorColor to blue
-                                errorColor: '#1500ff',
                             }),
                         ],
                     }
@@ -185,14 +185,12 @@
                                 delimiters: [
                                     { left: "$", right: "$", display: false }
                                 ],
-                                // change errorColor to blue
-                                errorColor: '#1500ff',
                             }),
                         ],
                     }
                 );
                 return converter.makeHtml(this.note);
-            }
+            },
         },
         methods: {
             get_problem: function () {

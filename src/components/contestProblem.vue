@@ -112,7 +112,12 @@
                                 </div>
                             </v-card>
                         </template>
-
+                    </v-card-text>
+                    <v-card-text class='body-1 grey--text text--darken-4 pt-0'
+                                 v-if="note"
+                    >
+                        <h4>Note:</h4><br />
+                        <div v-html="rendered_note"></div>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -163,14 +168,32 @@
                                 throwOnError: true,
                                 // disable displayMode
                                 displayMode: false,
-                                // change errorColor to blue
-                                errorColor: '#1500ff',
+                                delimiters: [
+                                    { left: "$", right: "$", display: false }
+                                ],
                             }),
                         ],
                     }
                 );
                 return converter.makeHtml(this.description);
-            }
+            },
+            rendered_note: function () {
+                let converter = new sd.Converter({
+                        extensions: [
+                            sdk({
+                                // maybe you want katex to throwOnError
+                                throwOnError: true,
+                                // disable displayMode
+                                displayMode: false,
+                                delimiters: [
+                                    { left: "$", right: "$", display: false }
+                                ],
+                            }),
+                        ],
+                    }
+                );
+                return converter.makeHtml(this.note);
+            },
         },
         methods: {
             copy_sample: function (text_for_copy) {
