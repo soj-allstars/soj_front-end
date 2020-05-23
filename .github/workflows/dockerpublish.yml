@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: '12'
       - run: npm install
-      - run: npm run lint
+      - run: npm run lint:pro
 
   push:
     needs: lint
