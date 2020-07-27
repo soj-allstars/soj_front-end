@@ -1,67 +1,83 @@
 <template>
     <div>
-        <v-simple-table fixed-header
-                        height="450px"
-        >
-            <template v-slot:default>
-                <thead>
-                <tr>
-                    <th class="text-left">ID</th>
-                    <th class="text-left">Verdict</th>
-                    <th class="text-left">Time Cost</th>
-                    <th class="text-left">Memory Cost</th>
-                    <th class="text-left">Language</th>
-                    <th class="text-left">Problem ID</th>
-                    <th class="text-left">Username</th>
-                    <th class="text-left">Submit Time</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="res in results" :key="res.id"
-                    :class="(highlighted_id) ?
+        <v-row class="row_height px-6 pb-3">
+            <v-spacer></v-spacer>
+            <v-col cols="3" class="d-flex align-center justify-end row_height">
+                <v-select
+                        :items="query_mode"
+                        v-model="selected_query_mode"
+                >
+                </v-select>
+            </v-col>
+        </v-row>
+
+        <v-row>
+            <v-col>
+                <v-simple-table fixed-header
+                                height="450px"
+                >
+                    <template v-slot:default>
+                        <thead>
+                        <tr>
+                            <th class="text-left">ID</th>
+                            <th class="text-left">Verdict</th>
+                            <th class="text-left">Time Cost</th>
+                            <th class="text-left">Memory Cost</th>
+                            <th class="text-left">Language</th>
+                            <th class="text-left">Problem ID</th>
+                            <th class="text-left">Username</th>
+                            <th class="text-left">Submit Time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="res in results" :key="res.id"
+                            :class="(highlighted_id) ?
                                 ((highlighted_id === res.id) ?
                                     'lime lighten-5'
                                 : '')
                             : '' "
-                >
-                    <td class="text-left">
-                        <v-btn  text block
-                                class="d-flex justify-start px-0"
-                                :to="{ name: 'problemSubmitResDetail', query: { submission_id: res.id } }"
+                        >
+                            <td class="text-left">
+                                <v-btn  text block
+                                        class="d-flex justify-start px-0"
+                                        :to="{ name: 'problemSubmitResDetail', query: { submission_id: res.id } }"
                                 >
-                            {{res.id}}
-                        </v-btn>
-                    </td>
-                    <td class="text-left show_res_btn"
-                        :class="verdict_color[res.verdict]"
-                        @click="show_detail(res.id)"
-                    >
-                        {{verdict_detail[res.verdict]}}
-                    </td>
-                    <td class="text-left caption">
-                        {{res.time}} ms
-                    </td>
-                    <td class="text-left caption">
-                        {{res.memory}} KB
-                    </td>
-                    <td class="text-left">{{language_detail[res.lang]}}</td>
-                    <td class="text-left">
-                        <!--分成比赛的列表页和非比赛的列表页……-->
-                        <!--耦合度极高……但是不管了-->
-                        <v-btn  text block
-                                class="d-flex justify-start px-0"
-                                :to="contest_mode ?
+                                    {{res.id}}
+                                </v-btn>
+                            </td>
+                            <td class="text-left show_res_btn"
+                                :class="verdict_color[res.verdict]"
+                                @click="show_detail(res.id)"
+                            >
+                                {{verdict_detail[res.verdict]}}
+                            </td>
+                            <td class="text-left caption">
+                                {{res.time}} ms
+                            </td>
+                            <td class="text-left caption">
+                                {{res.memory}} KB
+                            </td>
+                            <td class="text-left">{{language_detail[res.lang]}}</td>
+                            <td class="text-left">
+                                <!--分成比赛的列表页和非比赛的列表页……-->
+                                <!--耦合度极高……但是不管了-->
+                                <v-btn  text block
+                                        class="d-flex justify-start px-0"
+                                        :to="contest_mode ?
                                       { name: 'contestProblem', query: { pid: res.problem_no, cid: cid} }
                                     : { name: 'problem', query: {pid : res.problem_id} }">
-                            {{contest_mode ? res.problem_no : res.problem_id}}
-                        </v-btn>
-                    </td>
-                    <td class="text-left">{{res.user}}</td>
-                    <td class="text-left caption">{{res.submit_time.replace('T', ' ').replace(/\..*/, '')}}</td>
-                </tr>
-                </tbody>
-            </template>
-        </v-simple-table>
+                                    {{contest_mode ? res.problem_no : res.problem_id}}
+                                </v-btn>
+                            </td>
+                            <td class="text-left">{{res.user}}</td>
+                            <td class="text-left caption">{{res.submit_time.replace('T', ' ').replace(/\..*/, '')}}</td>
+                        </tr>
+                        </tbody>
+                    </template>
+                </v-simple-table>
+            </v-col>
+        </v-row>
+
         <v-row class="pt-3">
             <v-col>
                 <v-pagination
@@ -134,7 +150,20 @@ export default {
             selected_page: 1,
             // 弹出框的v-model
             show_res_detail: false,
+            // 查询模式的选择项的v-model
+            selected_query_mode: null,
 
+            // query_mode_selection
+            query_mode: [
+                {
+                    text: "用户名",
+                    value: "username",
+                },
+                {
+                    text: "自己",
+                    value: "self",
+                }
+            ],
 
             // verdict text mapping
             verdict_detail: verdict_long_name,
@@ -298,6 +327,10 @@ export default {
 </script>
 
 <style scoped>
+    .row_height {
+        height: 50px;
+    }
+
     .show_res_btn:hover {
         cursor: pointer;
     }
