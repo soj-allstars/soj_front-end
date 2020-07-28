@@ -9,7 +9,7 @@
             >
                 <v-col cols='10' align="center">
                     <v-card tile
-                            class="pa-10"
+                            class="pa-10 pt-2"
                     >
                         <v-row>
                             <v-col>
