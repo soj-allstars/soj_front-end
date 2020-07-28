@@ -19,6 +19,30 @@ const lang_backend_mapping = function () {
     return ret;
 }();
 
+// 用于过滤提交时的搜索提示语
+const query_mode_mapping = {
+    "用户名": "username",
+    "自己": "self",
+};
+
+// 转换成v-select要用的格式
+const query_mode = function () {
+    let ret = [];
+    for (let [key, value] of Object.entries(query_mode_mapping)) {
+        let obj = {
+            text: key,
+            value: value,
+        }
+        ret.push(obj);
+    }
+    return ret;
+}();
+
+const query_hint_text = {
+    "username": "输入你想要查询的用户名",
+    "self": "",
+};
+
 
 // 用于代码高亮
 const language_formal_name = {
@@ -60,4 +84,6 @@ export {
     language_formal_name,
     verdict_long_name,
     verdict_font_color,
+    query_mode,
+    query_hint_text,
 }
