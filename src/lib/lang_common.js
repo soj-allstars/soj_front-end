@@ -21,6 +21,7 @@ const lang_backend_mapping = function () {
 
 // 用于过滤提交时的搜索提示语
 const query_mode_mapping = {
+    "全部": "all",
     "用户名": "username",
     "自己": "self",
 };
@@ -39,6 +40,7 @@ const query_mode = function () {
 }();
 
 const query_hint_text = {
+    "全部": "",
     "username": "输入你想要查询的用户名",
     "self": "",
 };

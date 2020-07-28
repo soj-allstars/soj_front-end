@@ -3,15 +3,17 @@
         <v-row class="row_height">
             <v-col  class="px-5 d-flex align-center justify-end row_height">
                 <v-select
-                        :items="query_mode"
+                        :items="query_mode_selection"
                         v-model="selected_query_mode"
                 >
                 </v-select>
             </v-col>
-            <v-col cols="6" class="px-5 d-flex align-center row_height"
-                   v-if="selected_query_mode !== 'self'"
+            <v-col cols="7" class="px-5 d-flex align-center row_height"
+                   v-if="selected_query_mode !== 'self' && selected_query_mode !== 'all'"
             >
-                <v-text-field :placeholder="query_hint_text[selected_query_mode]">
+                <v-text-field :placeholder="query_hint_text[selected_query_mode]"
+                              v-model="query_text"
+                >
                 </v-text-field>
             </v-col>
             <v-col cols="2" class="px-5 d-flex align-center justify-end row_height">
@@ -163,11 +165,16 @@ export default {
             // 查询模式的选择项的v-model
             selected_query_mode: null,
 
+            // 用于Query的websocket
+            query_ws: null,
+
             // query_mode_selection
-            query_mode: query_mode,
+            query_mode_selection: query_mode,
 
             // query_mode对应的输入提示文字
             query_hint_text: query_hint_text,
+            // 用于查询的文本
+            query_text: "",
 
             // verdict text mapping
             verdict_detail: verdict_long_name,
@@ -291,6 +298,14 @@ export default {
 
                 thisCom.ws = ws;
             }
+        },
+
+        querySubmission: function () {
+            let thisCom = this;
+            if (thisCom.query_ws) {
+                thisCom.initLiveRes(thisCom.page);
+            }
+
         },
     },
 
