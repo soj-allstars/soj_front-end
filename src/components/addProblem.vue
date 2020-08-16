@@ -297,6 +297,15 @@
                                             <v-col align='start' cols="12">
                                                 <div class='caption'>* save problem before test</div>
                                                 <div class='caption'>* 一定要先保存问题再进行测试</div>
+                                                <h3>说明：</h3>
+                                                <div class='body-1'>
+                                                    <ul>
+                                                        <li>inputs 是一个 JSON 列表，每项是一个字符串，代表一个测试用例</li>
+                                                        <li>每一个 sample 最后都会被加进最终的测试用例中，所以 inputs 里最好不要包含与 sample 相同的用例</li>
+                                                        <li>sample 可以为空，如果为空，那么会默认使用 inputs 里的前两个用例作为 sample</li>
+                                                        <li>这里加完题之后，这题还是 invisible 的状态，需要去 admin 后台把这道题的 visible 改成 true，才能在题库看到</li>
+                                                    </ul>
+                                                </div>
                                             </v-col>
                                         </v-row>
                                         <!--box content end-->
