@@ -5,6 +5,25 @@ export default {
             var currentBaseURL = location.protocol + "//" + location.hostname;
             return currentBaseURL;
         };
+
+        Vue.prototype.signInGlobalInfo = function () {
+            let thisCom = this;
+            let ret = {};
+            $.ajax({
+                async: false,
+                type: "GET",
+                url: thisCom.serveUrl() + "/api/global-info/",
+                success: function(result) {
+                    ret.is_signed_in = result.is_signed_in;
+                    ret.username = result.username;
+                },
+                error: function(e) {
+                    console.error(e.status);
+                    console.error(e.responseText);
+                },
+            });
+            return ret;
+        }
         
         // getCookie转移到这里了
         Vue.prototype.getCookie = function(name) {

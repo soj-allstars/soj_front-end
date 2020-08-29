@@ -149,20 +149,9 @@
             },
             check_is_login: function() {
                 this.corss_domain_setup();
-                let thisCom = this;
-                $.ajax({
-                    type: "GET",
-                    url: thisCom.serveUrl() + "/api/global-info/",
-
-                    success: function(result) {
-                        thisCom.is_signed_in = result.is_signed_in;
-                        thisCom.username = result.username;
-                    },
-                    error: function(e) {
-                        console.error(e.status);
-                        console.error(e.responseText);
-                    },
-                });
+                let global_info = this.signInGlobalInfo();
+                this.is_signed_in = global_info.is_signed_in;
+                this.username = global_info.username;
             }
         },
         beforeMount() {

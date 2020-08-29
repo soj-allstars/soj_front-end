@@ -17,7 +17,9 @@
                 </v-text-field>
             </v-col>
             <v-col cols="2" class="px-5 d-flex align-center justify-end row_height">
-                <v-btn block outlined>
+                <v-btn block outlined
+                       @click="getSubmissionPage(1)"
+                >
                     查询
                 </v-btn>
             </v-col>
@@ -196,15 +198,29 @@ export default {
 
         getSubmissionPage: function(page_num) {
             let thisCom = this;
+            let data_builder = {
+                page: page_num
+            };
+            switch (this.selected_query_mode) {
+                case "username":
+                    data_builder.username = this.query_text;
+                    break;
+                case "self":
+                    let global_info = this.signInGlobalInfo();
+                    if (global_info.is_signed_in) {
+                        data_builder.username = global_info.username;
+                    }
+                    break;
+                default:
+                    break;
+            }
             $.ajax({
                 // 请求方式
                 type : "GET",
                 // 请求地址
                 url: thisCom.request_url ? thisCom.request_url : thisCom.serveUrl() + '/api/submissions/',
                 // url : thisCom.serveUrl() + '/api/submissions' + '/',
-                data : {
-                    page: page_num,
-                },
+                data : data_builder,
                 // 请求成功
                 success : function(result) {
 
