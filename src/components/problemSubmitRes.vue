@@ -143,18 +143,24 @@ export default {
     },
     data : function () {
         return {
-            // 和后端交互
+            /* 和后端交互 */
             submission_count: 0,
             previous: null,
             next: null,
             results: null,
             res_id: null,
 
+            // 已选择的查询模式
+            selected_query_mode: null,
+            // 用于查询的文本
+            query_text: "",
+
             // websocket of submission
             ws: null,
             resid_resobj_mapping: new Map(),
             // mapping of ws
             ws_resid_resobj_mapping: new Map(),
+
 
             // 一页的提交数，需要和后端协调，目前定为20
             page_length: 20,
@@ -164,19 +170,11 @@ export default {
             selected_page: 1,
             // 弹出框的v-model
             show_res_detail: false,
-            // 查询模式的选择项的v-model
-            selected_query_mode: null,
-
-            // 用于Query的websocket
-            query_ws: null,
-
-            // query_mode_selection
+            // 查询模式的选项
             query_mode_selection: query_mode,
-
-            // query_mode对应的输入提示文字
+            // 查询模式对应的输入提示文字
             query_hint_text: query_hint_text,
-            // 用于查询的文本
-            query_text: "",
+
 
             // verdict text mapping
             verdict_detail: verdict_long_name,
@@ -314,14 +312,6 @@ export default {
 
                 thisCom.ws = ws;
             }
-        },
-
-        querySubmission: function () {
-            let thisCom = this;
-            if (thisCom.query_ws) {
-                thisCom.initLiveRes(thisCom.page);
-            }
-
         },
     },
 
