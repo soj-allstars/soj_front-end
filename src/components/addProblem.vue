@@ -170,7 +170,7 @@
                                             <v-row>
                                                 <v-col>
                                                     <v-file-input
-                                                     label="upload solution file"
+                                                     label="upload solution code"
                                                      show-size
                                                      v-show="upload_solution"
                                                      @change="solution_file_uploaded"
@@ -180,7 +180,7 @@
                                                     <v-textarea
                                                       outlined
                                                       v-show="!upload_solution"
-                                                      label="solution content"
+                                                      label="solution code here"
                                                       v-model="solution_text"
                                                     ></v-textarea>
                                                 </v-col>
@@ -212,7 +212,7 @@
                                                 <v-text-field
                                                         dense
                                                         outlined
-                                                        label='id to be tested'
+                                                        label='problem id to be tested'
                                                         v-model="problem_id"
                                                 ></v-text-field>
                                             </v-col>
@@ -300,10 +300,15 @@
                                                 <h3>说明：</h3>
                                                 <div class='body-1'>
                                                     <ul>
-                                                        <li>inputs 是一个 JSON 列表，每项是一个字符串，代表一个测试用例</li>
+                                                        <li>description 使用 Markdown 格式</li>
+                                                        <li>Note 是显示在 sample 后进行补充说明的字段，同样使用 Markdown，可填可不填</li>
+                                                        <li>inputs 是一个 JSON 列表，每项是一个字符串，代表一个测试用例。例如：["abc", "cba"]</li>
                                                         <li>每一个 sample 最后都会被加进最终的测试用例中，所以 inputs 里最好不要包含与 sample 相同的用例</li>
                                                         <li>sample 可以为空，如果为空，那么会默认使用 inputs 里的前两个用例作为 sample</li>
-                                                        <li>这里加完题之后，这题还是 invisible 的状态，需要去 admin 后台把这道题的 visible 改成 true，才能在题库看到</li>
+                                                        <li>sample 的输出后面会根据标程直接生成</li>
+                                                        <li>checker type 指的是如何比较用户的输出和标程产生的输出，比如 fcmp 就是逐行比较，并且不忽略空格</li>
+                                                        <li>点击 save problem 只会将上面填的信息都保存下来，需要再点击 test solution 才会验证标程是否能运行，并生成对应的输出文件，如果结果是 AC，则说明标程没问题并且已经生成输出</li>
+                                                        <li>这里加完题之后，这题还是 invisible 的状态，需要去 <a href="/admin/problemset/problem/">admin 后台</a> 把这道题的 visible 改成 true，才能在题库看到</li>
                                                     </ul>
                                                 </div>
                                             </v-col>
