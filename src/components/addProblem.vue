@@ -212,7 +212,7 @@
                                                 <v-text-field
                                                         dense
                                                         outlined
-                                                        label='problem id to be tested'
+                                                        label='problem id'
                                                         v-model="problem_id"
                                                 ></v-text-field>
                                             </v-col>
@@ -584,25 +584,30 @@
                     solution = this.solution_text;
                 }
 
+                let data = {
+                    title: thisCom.title,
+                    description: thisCom.description,
+                    time_limit: thisCom.time_limit,
+                    memory_limit: thisCom.memory_limit * 1024,  // 传给后端的是KB，所以要乘以1024
+                    note: thisCom.note,
+                    sample_inputs: JSON.stringify(thisCom.sample_inputs),
+                    checker_type: thisCom.selected_checker_type,
+                    checker_code: checker_code,
+                    inputs: inputs,
+                    solution_code: solution,
+                    solution_lang: thisCom.selected_lang,
+                }
+                if (this.problem_id) {
+                    data.id = this.problem_id
+                }
+
                 $.ajax({
                     //请求方式
-                    type : "POST",
+                    type : thisCom.problem_id ? "PUT" : "POST",
                     //请求地址
-                    url : thisCom.serveUrl() + '/api/problem/save/',
+                    url : thisCom.serveUrl() + '/api/problem/save/' + (thisCom.problem_id ? `${thisCom.problem_id}/` : ''),
                     //POST里面的data
-                    data: {
-                        title: thisCom.title,
-                        description: thisCom.description,
-                        time_limit: thisCom.time_limit,
-                        memory_limit: thisCom.memory_limit * 1024,  // 传给后端的是KB，所以要乘以1024
-                        note: thisCom.note,
-                        sample_inputs: JSON.stringify(thisCom.sample_inputs),
-                        checker_type: thisCom.selected_checker_type,
-                        checker_code: checker_code,
-                        inputs: inputs,
-                        solution_code: solution,
-                        solution_lang: thisCom.selected_lang,
-                    },
+                    data: data,
                     //请求成功
                     success : function(result) {
                         thisCom.problem_id_from_backend = result.problem_id;
@@ -640,6 +645,11 @@
                 this.solution_received = false;
                 this.sp_checker_received = false;
                 this.error_desc = "";
+
+                if (this.ws) {
+                    this.ws.close();
+                    this.ws = null;
+                }
 
                 let ws = null;
                 if (!this.ws) {
